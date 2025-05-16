@@ -1,0 +1,192 @@
+import React from "react";
+import { format, eachDayOfInterval, isWeekend, isPast } from "date-fns";
+import { LeaveApplication } from "../../types";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { useQueryClient } from "@tanstack/react-query";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../app/store";
+import { setUser } from "../../features/auth/authSlice";
+
+interface LeaveHistoryProps {
+  leaves: LeaveApplication[] | undefined;
+  isLoading: boolean;
+  managerNames: string[];
+  onEditLeave: (leave: LeaveApplication) => void;
+}
+
+const LeaveHistory: React.FC<LeaveHistoryProps> = ({
+  leaves,
+  isLoading,
+  managerNames,
+  onEditLeave,
+}) => {
+  const auth = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch();
+  const queryClient = useQueryClient();
+
+  const getStatusClass = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "pending":
+        return "leave-status-pending";
+      case "approved":
+        return "leave-status-approved";
+      case "rejected":
+        return "leave-status-rejected";
+      case "cancelled":
+        return "leave-status-cancelled";
+      default:
+        return "";
+    }
+  };
+
+  const handleCancelLeave = async (leave: LeaveApplication) => {
+    if (!["pending", "approved"].includes(leave.status)) {
+      toast.error("Only pending or approved leave requests can be cancelled.");
+      return;
+    }
+
+    if (leave.status === "approved" && isPast(new Date(leave.startDate))) {
+      toast.error("Cannot cancel a leave that has already started.");
+      return;
+    }
+
+    try {
+      let updatedLeaveBalance = auth.leaveBalance;
+      let updatedUnpaid = auth.unpaidLeaves;
+      if (leave.status === "approved") {
+        const allDays = eachDayOfInterval({
+          start: new Date(leave.startDate),
+          end: new Date(leave.endDate),
+        });
+        const days = allDays.filter((d) => !isWeekend(d)).length;
+        if (leave.type === "paid") updatedLeaveBalance += days;
+        else updatedUnpaid = Math.max(0, updatedUnpaid - days);
+      }
+      await axios.patch(`http://localhost:3001/leaveApplications/${leave.id}`, {
+        status: "cancelled",
+      });
+      dispatch(
+        setUser({
+          ...auth,
+          leaveBalance: updatedLeaveBalance,
+          unpaidLeaves: updatedUnpaid,
+        })
+      );
+      await axios.patch(`http://localhost:3001/users/${auth.id}`, {
+        leaveBalance: updatedLeaveBalance,
+        unpaidLeaves: updatedUnpaid,
+      });
+      await queryClient.invalidateQueries({ queryKey: ["leave-applications"] });
+      toast.success("Leave request cancelled successfully!");
+    } catch (e) {
+      console.error(e);
+      toast.error("Failed to cancel leave request. Please try again.");
+    }
+  };
+  const canPerformActions = (leave: LeaveApplication) => {
+    if (leave.status === "pending") {
+      return true; 
+    } else if (leave.status === "approved") {
+      return !isPast(new Date(leave.startDate));
+    }
+    return false; 
+  };
+
+  return (
+    <div className="leave-history-section">
+      <h2>Leave History</h2> 
+      {isLoading ? (
+        <div className="loading">Loading leave history...</div>
+      ) : (
+        <table className="leaves-container">
+          <thead>
+            <tr>
+              <th>Applied on</th>
+              <th>Requested For</th>
+              <th>Leave Type</th>
+              <th>Reason</th>
+              <th>Status</th>
+              <th>Action Taken</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {leaves && leaves.length > 0 ? (
+              leaves.map((leave, index) => (
+                <tr key={leave.id}>
+                  <td>{format(new Date(leave.createdAt), "PPP")}</td>
+                  <td>
+                    <span className="date-range">
+                      {format(new Date(leave.startDate), "PPP")}-{" "}
+                      {format(new Date(leave.endDate), "PPP")}
+                    </span>
+                    <span className="working-days">
+                      {
+                        eachDayOfInterval({
+                          start: new Date(leave.startDate),
+                          end: new Date(leave.endDate),
+                        }).filter((d) => !isWeekend(d)).length
+                      }{" "}
+                      working days
+                    </span>
+                  </td>
+                  <td className="leave-type">{leave.type}</td>
+                  <td>{leave.reason}</td>
+                  <td>
+                    <span
+                      className={`leave-status ${getStatusClass(leave.status)}`}
+                    >
+                      {leave.status}
+                    </span>
+                  </td>
+                  <td>
+                    <div className="approval-info">
+                      <span className="approved-by-label">Approved By</span>
+                      <span className="manager-name">
+                        {leave.status === "approved"
+                          ? managerNames[index]
+                          : "Pending"}
+                      </span>
+                    </div>
+                  </td>
+                  <td>
+                    {canPerformActions(leave) ? (
+                      <div className="buttons-group">
+                        <button
+                          className="leave-edit-button"
+                          onClick={() => onEditLeave(leave)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="leave-cancel-button"
+                          onClick={() => handleCancelLeave(leave)}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <button disabled className="disabled-btn">
+                        Actions
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={7} className="no-leaves-message">
+                  No leave history found. Apply for leave to see your history
+                  here.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
+};
+
+export default LeaveHistory;

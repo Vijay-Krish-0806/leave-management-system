@@ -1,0 +1,204 @@
+
+//LoginPage.tsx
+const { data: users } = await axios.get<User[]>("http://localhost:3001/users");
+
+
+//ApplyLeave.tsx
+async function getLeaveApplications() {
+  const response = await axios.get(
+    `http://localhost:3001/leaveApplications/?employeeId=${auth.id}&_sort=createdAt&_order=desc`
+  );
+  console.log(response.data);
+  return response.data as LeaveApplication[];
+}
+
+axios
+  .get(`http://localhost:3001/users/${auth.id}`)
+  .then((res) => setManagerId(res.data.managerId))
+  .catch((e) => console.error("Error fetching user", e));
+
+await axios.post("http://localhost:3001/leaveApplications", leaveApplication);
+await axios.patch(`http://localhost:3001/users/${auth.id}`, {
+  leaveBalance: updatedLeaveBalance,
+  unpaidLeaves: updatedUnpaid,
+});
+
+await axios.put(
+  `http://localhost:3001/leaveApplications/${editLeaveId}`,
+  leaveApplication
+);
+
+
+
+//LeaveHistory.tsx
+await axios.patch(`http://localhost:3001/leaveApplications/${leave.id}`, {
+  status: "cancelled",
+});
+await axios.patch(`http://localhost:3001/users/${auth.id}`, {
+  leaveBalance: updatedLeaveBalance,
+  unpaidLeaves: updatedUnpaid,
+});
+
+//ViewAttendance.tsx
+const response = await axios.get<User>(`http://localhost:3001/users/${userId}`);
+
+//CreateEditEmployee.tsx
+const getAllUsers = async () => {
+  try {
+    const response = await axios.get("http://localhost:3001/users");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    throw error;
+  }
+};
+
+const createUser = async (newUser: Omit<User, "id">): Promise<User> => {
+  try {
+    const response = await axios.post<User>("http://localhost:3001/users", {
+      ...newUser,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error creating user:", error);
+    throw error;
+  }
+};
+const updateUser = async (updatedUser: User): Promise<User> => {
+  try {
+    const response = await axios.put<User>(
+      `http://localhost:3001/users/${updatedUser.id}`,
+      {
+        ...updatedUser,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error updating user:", error);
+    throw error;
+  }
+};
+
+const updateLeaveApplicationsForEmployee = async (
+  employeeId: string,
+  newManagerId: string
+): Promise<void> => {
+  try {
+    const leaveApplications = await getAllLeaveApplications();
+    const employeeLeaveApplications = leaveApplications.filter(
+      (application) => application.employeeId === employeeId
+    );
+
+    const updatePromises = employeeLeaveApplications.map((application) => {
+      return axios.put(
+        `http://localhost:3001/leaveApplications/${application.id}`,
+        {
+          ...application,
+          currentManager: newManagerId,
+        }
+      );
+    });
+
+    await Promise.all(updatePromises);
+
+    console.log(
+      `Updated ${updatePromises.length} leave applications for employee ${employeeId} with ${newManagerId}`
+    );
+  } catch (error) {
+    console.error("Error updating leave applications:", error);
+    throw error;
+  }
+};
+
+//EmployeeDetails.tsx
+const getUser = async () => {
+  const response = await axios.get(`http://localhost:3001/users/${userId}`);
+  return response.data;
+};
+
+const getAllLeaves = async () => {
+  const response = await axios.get(
+    `http://localhost:3001/leaveApplications/?employeeId=${userId}`
+  );
+  return response.data;
+};
+
+const getManagerName = async () => {
+  if (userData && userData.managerId) {
+    try {
+      const res = await axios.get(
+        `http://localhost:3001/users/${userData.managerId}`
+      );
+      setManagerName(res.data.username);
+    } catch (e) {
+      console.error("Error fetching manager:", e);
+    }
+  }
+};
+
+//ViewEmployees.tsx
+
+const response = await axios.delete(`${API_URL}/${id}`);
+const fetchUsers = async (): Promise<User[]> => {
+    const response = await axios.get(API_URL);
+    return response.data;
+  };
+
+  
+//ViewLeaves.tsx
+const fetchLeaves = async (): Promise<LeaveApplication[]> => {
+    const response = await axios.get(API_URL);
+    return response.data;
+  };
+
+  
+  //ViewActiveLeaves.tsx
+    const getLeaveApplications = async (): Promise<LeaveApplication[]> => {
+    try {
+      const response = await axios.get(`${API_URL}/leaveApplications`);
+      return response.data;
+    } catch (error) {
+      console.error("Failed to fetch leave applications:", error);
+      throw error;
+    }
+  };
+  
+  // Update leave status
+  const updateLeaveStatus = async (
+    updatedLeave: LeaveApplication
+  ): Promise<LeaveApplication> => {
+    const response = await axios.put<LeaveApplication>(
+      `${API_URL}/leaveApplications/${updatedLeave.id}`,
+      updatedLeave
+    );
+    return response.data;
+  };
+
+  // Update user data including leave balances
+  const updateUserData = async (updatedUser: User): Promise<User> => {
+    const response = await axios.put<User>(
+      `${API_URL}/users/${updatedUser.id}`,
+      updatedUser
+    );
+    return response.data;
+  };
+
+      const response = await axios.get(`${API_URL}/users/${leave.employeeId}`);
+
+//ViewLeaveHistory.tsx
+ const getLeaveApplications = async (): Promise<LeaveApplication[]> => {
+    try {
+      const response = await axios.get(`${API_URL}/leaveApplications`);
+      return response.data;
+    } catch (error) {
+      console.error("Failed to fetch leave applications:", error);
+      throw error;
+    }
+  };
+
+  //ViewTeam.tsx
+   const getAllUsers = async () => {
+    const response = await axios.get("http://localhost:3001/users");
+    return response.data;
+  };
+
