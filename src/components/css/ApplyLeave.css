@@ -11,32 +11,96 @@
   --light-text: #6c757d;
   --hover-bg: #f2f7ff;
   --shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  --hover-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
   --border-radius: 6px;
-  --transition: all 0.3s ease;
-}
-.leave-management-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  max-width: 1400px;
-  padding: 20px;
-  color: var(--text-color);
+  --transition: all 0.3s cubic-bezier(0.4, 0.2, 0.2, 1);
 }
 
-.leave-application {
-  flex: 1;
-  min-width: 350px;
-  background-color: white;
+.leave-management-container {
+  display: grid;
+  grid-template-areas:
+    "leave-application calendar-container"
+    "leave-history leave-history";
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 15px 16px;
+}
+
+/* Common styles for card-like elements */
+.leave-application,
+.calendar-container,
+.leave-history-section {
+  background: #fff;
   border-radius: var(--border-radius);
   box-shadow: var(--shadow);
-  padding: 10px 24px;
-  height: fit-content;
-  border-left: 3px solid var(--primary-dark);
+  padding: 24px;
+  transition: var(--transition);
 }
 
-/* Improved form groups with better spacing */
+/* Common hover effect */
+.leave-application:hover,
+.calendar-container:hover,
+.leave-history-section:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--hover-shadow);
+}
+
+/* Specific styles for each section */
+.leave-application {
+  grid-area: leave-application;
+  border-left: 4px solid var(--primary-dark);
+  padding: 10px 28px;
+}
+
+.calendar-container {
+  grid-area: calendar-container;
+  border-left: 4px solid var(--info-color);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 28px;
+}
+
+.leave-history-section {
+  grid-area: leave-history;
+  border-left: 4px solid var(--warning-color);
+  overflow-x: auto;
+}
+
+.calendar-legend {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  justify-content: center;
+}
+
+.calendar-legend .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.calendar-legend .legend-color {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.07);
+}
+
+.calendar-legend .legend-holiday .legend-color {
+  background-color: #ffe0e6;
+}
+
+.calendar-legend .legend-leave .legend-color {
+  background-color: #e0f7ff;
+}
+
+/* Form styles */
 .form-group {
-  margin-bottom: 22px;
+  margin-bottom: 24px;
   position: relative;
 }
 
@@ -44,20 +108,21 @@
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
-  color: var(--text-color);
   font-size: 14px;
-  letter-spacing: 0.01em;
+  color: var(--text-color);
+  letter-spacing: 0.02em;
 }
 
+/* Common input styles */
 .input-container input,
 .date-picker-input,
 .select-container select {
   width: 100%;
-  padding: 12px 14px;
+  padding: 12px 16px;
   border: 1.5px solid var(--border-color);
   border-radius: 8px;
   font-size: 14px;
-  transition: all 0.2s ease;
+  transition: var(--transition);
   background-color: #fcfdfe;
   color: var(--text-color);
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
@@ -72,21 +137,23 @@
   background-color: #fff;
 }
 
-
+/* Select styling */
 .select-container {
   position: relative;
+  width: 97%;
 }
 
 .select-container select {
   appearance: none;
-  padding-right: 36px; 
+  padding-right: 40px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%234a6fa5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 10px center;
+  background-position: right 12px center;
   background-size: 16px;
   cursor: pointer;
 }
-/* Date picker enhanced styling */
+
+/* Date picker styling */
 .date-picker-container {
   position: relative;
 }
@@ -95,20 +162,12 @@
   cursor: pointer;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%234a6fa5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 10px center;
+  background-position: right 12px center;
   background-size: 18px;
-  padding-right: 36px;
+  padding-right: 40px;
 }
 
-/* Improved error states */
-.input-container.error input,
-.select-container.error select,
-.date-picker-container.error .date-picker-input {
-  border-color: var(--error-color);
-  background-color: #fff;
-  box-shadow: 0 0 0 3px rgba(217, 83, 79, 0.15);
-}
-
+/* Error message styling */
 .error-message {
   color: var(--error-color);
   font-size: 12px;
@@ -132,43 +191,68 @@
   font-weight: bold;
 }
 
-/* Disabled state styling */
-.input-container input:disabled,
-.date-picker-input:disabled,
-.select-container select:disabled {
-  background-color: #f5f7fa;
-  cursor: not-allowed;
-  opacity: 0.8;
-  box-shadow: none;
+/* Leave summary styling */
+.leave-summary {
+  background: linear-gradient(100deg, #eaf6ff 70%, #f8f9fa 100%);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(74, 111, 165, 0.1);
+  padding: 28px 24px 20px;
+  margin-bottom: 32px;
+  border-left: 4px solid var(--primary-color);
+  transition: var(--transition);
 }
 
-/* Placeholder styling */
-.input-container input::placeholder,
-.date-picker-input::placeholder {
-  color: #adb5bd;
-  opacity: 1;
+.leave-summary h3 {
+  margin: 0 0 18px;
+  color: var(--primary-dark);
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
-.select-container select:focus {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%234a6fa5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='18 15 12 9 6 15'%3E%3C/polyline%3E%3C/svg%3E");
-}
-
-.action-buttons {
+.leave-details {
   display: flex;
-  gap: 12px;
-  margin-top: 24px;
+  gap: 32px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
 }
 
+.leave-detail {
+  display: flex;
+  flex-direction: column;
+  min-width: 120px;
+  margin-bottom: 8px;
+}
+
+.leave-detail .detail-label {
+  color: var(--light-text);
+  font-size: 0.96rem;
+  margin-bottom: 3px;
+}
+
+.leave-detail .detail-value {
+  color: var(--primary-dark);
+  font-size: 1.15rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.leave-detail.total-days .detail-value {
+  color: #1d8348;
+  font-weight: bold;
+}
+
+/* Button styles */
 .submit-button,
 .cancel-edit-button {
-  padding: 12px 18px;
+  padding: 12px 20px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
-  transition: all 0.2s ease;
+  transition: var(--transition);
   font-size: 14px;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.02em;
 }
 
 .submit-button {
@@ -178,38 +262,13 @@
   box-shadow: 0 2px 4px rgba(74, 111, 165, 0.25);
 }
 
-.submit-button:hover {
-  background-color: var(--primary-dark);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(74, 111, 165, 0.3);
-}
-
-.submit-button:active {
-  transform: translateY(0);
-  box-shadow: 0 1px 2px rgba(74, 111, 165, 0.25);
-}
-
 .cancel-edit-button {
   background-color: var(--secondary-color);
   color: var(--text-color);
   border: 1.5px solid var(--border-color);
 }
 
-.cancel-edit-button:hover {
-  background-color: #e9ecef;
-  border-color: #d5dbe3;
-}
-/* Leave History styling */
-.leave-history-section {
-  flex: 2;
-  background-color: white;
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow);
-  padding: 24px;
-  border-left: 3px solid var(--warning-color);
-  overflow-x: auto;
-}
-
+/* Leave history section */
 .leave-history-section h2 {
   margin-top: 0;
   color: var(--primary-color);
@@ -310,6 +369,7 @@
   gap: 8px;
 }
 
+/* Common action button styles */
 .leave-edit-button,
 .leave-cancel-button {
   font-size: 12px;
@@ -319,11 +379,11 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  color: white;
 }
 
 .leave-edit-button {
   background-color: var(--info-color);
-  color: white;
 }
 
 .leave-edit-button:hover {
@@ -332,7 +392,6 @@
 
 .leave-cancel-button {
   background-color: var(--warning-color);
-  color: white;
 }
 
 .leave-cancel-button:hover {
@@ -355,44 +414,22 @@
   padding: 30px 0;
 }
 
-/* Responsive adjustments */
-@media (max-width: 1200px) {
-  .leave-management-container {
-    flex-direction: column;
-  }
-
-  .leave-application,
-  .leave-history-section {
-    width: 100%;
-    min-width: 100%;
-  }
-}
-
-@media (max-width: 768px) {
-  .leave-history-section {
-    overflow-x: auto;
-  }
-
-  .leaves-container {
-    min-width: 800px;
-  }
-}
+/* DatePicker overrides */
 .react-datepicker-wrapper {
   width: 100%;
 }
 
 .react-datepicker {
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    sans-serif !important;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
   font-size: 0.9rem !important;
-  border: 1px solid #043b82 !important;
+  border: 1px solid var(--primary-dark) !important;
   border-radius: 12px !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
-  width: 300px !important;
+  width: 100% !important;
+  max-width: 300px !important;
   padding: 10px !important;
 }
 
-/* Header styling */
 .react-datepicker__header {
   background-color: var(--primary-color) !important;
   border-radius: 8px !important;
@@ -435,13 +472,14 @@
   border-radius: 50% !important;
   color: #333 !important;
   font-weight: 500 !important;
-  transition: all 0.2s ease !important;
+  transition: var(--transition) !important;
 }
 
 .react-datepicker__day:hover {
   background-color: #fff !important;
   border-radius: 50% !important;
 }
+
 .react-datepicker__day--selected {
   background-color: var(--primary-color) !important;
   color: white !important;
@@ -452,7 +490,7 @@
 .react-datepicker__day--selected:hover,
 .react-datepicker__day--keyboard-selected:hover {
   background-color: var(--primary-color) !important;
-  color:#fff !important;
+  color: white !important;
   opacity: 0.9;
 }
 
@@ -489,4 +527,31 @@
 
 .react-datepicker__month-container {
   width: 100% !important;
+}
+
+/* Highlight custom dates */
+.react-datepicker__day--highlighted-holiday {
+  background-color: #ffe0e6;
+}
+.react-datepicker__day--highlighted-leave {
+  background-color: #e0f7ff;
+}
+
+
+/* Responsive: stack on mobile */
+@media (max-width: 900px) {
+  .leave-management-container {
+    grid-template-areas:
+      "leave-application"
+      "calendar-container"
+      "leave-history";
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 12px 4px;
+  }
+  
+  .leave-application,
+  .calendar-container {
+    padding: 20px 10px;
+  }
 }

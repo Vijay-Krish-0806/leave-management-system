@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import { FaSpinner, FaUserEdit, FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import CreateEditEmployee from "./CreateEditEmployee";
@@ -8,13 +7,7 @@ import "../css/Table.css";
 import { User } from "../../types";
 import { FaPlus, FaUser } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
-
-const API_URL = "http://localhost:3001/users";
-
-const fetchUsers = async (): Promise<User[]> => {
-  const response = await axios.get(API_URL);
-  return response.data;
-};
+import api from "../../api/apiCalls";
 
 const ViewEmployees: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -28,17 +21,35 @@ const ViewEmployees: React.FC = () => {
     error,
   } = useQuery({
     queryKey: ["users"],
-    queryFn: fetchUsers,
+    queryFn: api.user.getAll,
   });
   const countOfHRs = users?.filter((user) => user.role === "HR");
+  const defaultManager = users?.find((user) => user.id === "2183");
 
   const deleteUser = async (id: string) => {
-    if (countOfHRs && countOfHRs.length <= 1) {
-      toast.error("Cannot delete the HR");
-      throw new Error("Cannot delete the HR");
+    // Check if we can delete this user
+    if (
+      (countOfHRs &&
+        countOfHRs.length <= 1 &&
+        users?.find((u) => u.id === id)?.role === "HR") ||
+      (defaultManager && id === defaultManager.id)
+    ) {
+      toast.error("Cannot delete the User");
+      throw new Error("Cannot delete the user");
     }
-    const response = await axios.delete(`${API_URL}/${id}`);
-    return response.data;
+
+    if (!defaultManager) {
+      toast.error("Default manager not found");
+      throw new Error("Default manager not found");
+    }
+
+    try {
+      await api.combined.deleteUserAndCleanup(id, defaultManager.id as string);
+      return { success: true };
+    } catch (error) {
+      console.error("Error during user deletion process:", error);
+      throw error;
+    }
   };
 
   const queryClient = useQueryClient();
@@ -47,6 +58,7 @@ const ViewEmployees: React.FC = () => {
     mutationFn: deleteUser,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["leaveApplications"] });
       toast.success("User deleted successfully");
     },
     onError: (error) => {

@@ -5,6 +5,7 @@ import {
   eachDayOfInterval,
   format,
   areIntervalsOverlapping,
+  parseISO,
 } from "date-fns";
 import "react-datepicker/dist/react-datepicker.css";
 import "../css/ApplyLeave.css";
@@ -16,6 +17,15 @@ import { setUser } from "../../features/auth/authSlice";
 import { toast } from "react-toastify";
 import { LeaveApplication } from "../../types";
 import LeaveHistory from "./LeaveHistory";
+
+const HOLIDAYS = [
+  "2025-01-01",
+  "2025-01-14",
+  "2025-08-15",
+  "2025-08-24",
+  "2025-10-02",
+  "2025-10-24",
+].map((d) => parseISO(d));
 
 const LeaveManagement: React.FC = () => {
   const auth = useSelector((state: RootState) => state.auth);
@@ -29,6 +39,9 @@ const LeaveManagement: React.FC = () => {
     null,
   ]);
   const [startDate, endDate] = dateRange;
+  const [leaves, setLeaves] = useState<
+    { startDate: string; endDate: string }[]
+  >([]);
   const [leaveType, setLeaveType] = useState<string>("");
   const [leaveReason, setLeaveReason] = useState<string>("");
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -46,10 +59,11 @@ const LeaveManagement: React.FC = () => {
     queryKey: ["leave-applications"],
     queryFn: getLeaveApplications,
   });
+  console.log(userLeaves);
 
   async function getLeaveApplications() {
     const response = await axios.get(
-      `http://localhost:3001/leaveApplications/?employeeId=${auth.id}&_sort=createdAt&_order=desc`
+      `http://localhost:3001/leaveApplications/?employeeId=${auth.id}`
     );
     return response.data as LeaveApplication[];
   }
@@ -87,6 +101,25 @@ const LeaveManagement: React.FC = () => {
 
     fetchManagerNames();
   }, [auth, userLeaves, managerId]);
+
+  useEffect(() => {
+    setLeaves(
+      (userLeaves || []).map(({ startDate, endDate }) => ({
+        startDate,
+        endDate,
+      }))
+    );
+  }, []);
+
+  const leaveDates: Date[] = leaves.flatMap(({ startDate, endDate }) => {
+    const start = parseISO(startDate);
+    const end = parseISO(endDate);
+    return eachDayOfInterval({ start, end });
+  });
+  const highlightWithRanges = [
+    { "react-datepicker__day--highlighted-holiday": HOLIDAYS },
+    { "react-datepicker__day--highlighted-leave": leaveDates || [] },
+  ];
 
   const businessDaysCount = useMemo(() => {
     if (!startDate) return 0;
@@ -337,6 +370,24 @@ const LeaveManagement: React.FC = () => {
             </div>
           </div>
         )}
+      </div>
+
+      <div className="calendar-container">
+        <DatePicker
+          //@ts-ignore
+          highlightDates={highlightWithRanges}
+          inline
+        />
+        <div className="calendar-legend">
+          <div className="legend-item legend-holiday">
+            <span className="legend-color" />
+            <span>Holiday</span>
+          </div>
+          <div className="legend-item legend-leave">
+            <span className="legend-color" />
+            <span>Leave</span>
+          </div>
+        </div>
       </div>
 
       <LeaveHistory
