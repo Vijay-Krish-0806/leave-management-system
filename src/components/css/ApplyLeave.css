@@ -52,7 +52,6 @@
   border-left: 4px solid var(--primary-dark);
   padding: 10px 28px;
   position: relative;
-
 }
 
 .calendar-container {
@@ -159,7 +158,6 @@
   position: relative;
 }
 
-
 /* Error message styling */
 .error-message {
   color: var(--error-color);
@@ -192,8 +190,6 @@
   padding: 10px 10px 10px;
   margin-bottom: 20px;
   border-left: 4px solid var(--primary-color);
-
-
 }
 
 .leave-summary h3 {
@@ -260,13 +256,32 @@
 }
 
 /* Leave history section */
-.leave-history-section h2 {
+.leave-history-section {
   margin-top: 0;
   color: var(--primary-color);
-  font-size: 1.5rem;
-  margin-bottom: 24px;
-  padding-bottom: 12px;
+  font-size: 1rem;
+  margin-bottom: 15px;
+  padding-bottom: 5px;
   border-bottom: 1px solid var(--border-color);
+}
+
+.filter-container {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.filter-container span{
+  font-size: 1.3rem;
+}
+.filters{
+  display: flex;
+  gap:20px;
+  select{
+   margin-bottom: 10px;
+  }
+
 }
 
 .loading {
@@ -426,10 +441,9 @@
   border-radius: 8px !important;
   padding: 16px 0 !important;
 }
-.react-datepicker__close-icon{
-position: absolute;
-right:3%;
-
+.react-datepicker__close-icon {
+  position: absolute;
+  right: 3%;
 }
 
 .react-datepicker__current-month {
@@ -533,7 +547,6 @@ right:3%;
   background-color: #e0f7ff;
 }
 
-
 /* Responsive: stack on mobile */
 @media (max-width: 900px) {
   .leave-management-container {
@@ -545,7 +558,7 @@ right:3%;
     gap: 24px;
     padding: 12px 4px;
   }
-  
+
   .leave-application,
   .calendar-container {
     padding: 20px 10px;

@@ -30,7 +30,7 @@
 
 .custom-table th,
 .custom-table td {
-  padding: 16px 12px;
+  padding: 12px 12px;
   text-align: left;
   font-size: 0.95rem;
 }
@@ -63,6 +63,29 @@
 
 .custom-table tr:last-child td {
   border-bottom: none;
+}
+
+/* Container for search & filters */
+.table-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 1rem 1rem;
+  gap:1rem;
+}
+
+
+/* Search input */
+.table-controls input[type="text"] {
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+}
+
+.table-controls select {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
 }
 
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { format, eachDayOfInterval, isWeekend, isPast } from "date-fns";
 import { LeaveApplication } from "../../types";
 import { toast } from "react-toastify";
@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../app/store";
 import { setUser } from "../../features/auth/authSlice";
 import { combinedOperations } from "../../api/apiCalls";
-import "../css/Table.css"
+import "../css/Table.css";
 
 interface LeaveHistoryProps {
   leaves: LeaveApplication[] | undefined;
@@ -22,6 +22,9 @@ const LeaveHistory: React.FC<LeaveHistoryProps> = ({
   managerNames,
   onEditLeave,
 }) => {
+  const [filterType, setFilterType] = useState<string>("All");
+  const [filterStatus, setFilterStatus] = useState<string>("All");
+
   const auth = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
@@ -41,6 +44,15 @@ const LeaveHistory: React.FC<LeaveHistoryProps> = ({
     }
   };
 
+  const filteredLeaves = useMemo(() => {
+    if (!leaves) return [];
+    return leaves.filter((leave) => {
+      const matchesType = filterType === "All" || leave.type === filterType;
+      const matchesStatus =
+        filterStatus === "All" || leave.status === filterStatus;
+      return matchesType && matchesStatus;
+    });
+  }, [leaves, filterType, filterStatus]);
   const handleCancelLeave = async (leave: LeaveApplication) => {
     if (!["pending", "approved"].includes(leave.status)) {
       toast.error("Only pending or approved leave requests can be cancelled.");
@@ -104,7 +116,35 @@ const LeaveHistory: React.FC<LeaveHistoryProps> = ({
 
   return (
     <div className="leave-history-section">
-      <h2>Leave History</h2>
+      <div className="filter-container">
+        <div>
+          <span>Leave History</span>
+        </div>
+        <div className="filters">
+          <select
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value)}
+          >
+            <option value="All">All Types</option>
+            <option value="paid">Paid</option>
+            <option value="unpaid">Unpaid</option>
+            <option value="paternity">Paternity</option>
+            <option value="maternity">Maternity</option>
+            <option value="bereavement">Bereavement</option>
+          </select>
+
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+          >
+            <option value="All">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="cancelled">Cancelled</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+      </div>
       {isLoading ? (
         <div className="loading">Loading leave history...</div>
       ) : (
@@ -121,8 +161,8 @@ const LeaveHistory: React.FC<LeaveHistoryProps> = ({
             </tr>
           </thead>
           <tbody>
-            {leaves && leaves.length > 0 ? (
-              leaves.map((leave, index) => (
+            {filteredLeaves && filteredLeaves.length > 0 ? (
+              filteredLeaves.map((leave, index) => (
                 <tr key={leave.id}>
                   <td>{format(new Date(leave.createdAt), "PPP")}</td>
                   <td>

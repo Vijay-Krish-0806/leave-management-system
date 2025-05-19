@@ -20,8 +20,8 @@
       "role": "HR",
       "gender": "female",
       "managerId": "2183",
-      "department":"HR",
-      "leaveBalance": 20,
+      "department": "HR",
+      "leaveBalance": 19,
       "unpaidLeaves": 5
     },
     {
@@ -56,7 +56,7 @@
       "gender": "male",
       "department": "Python",
       "managerId": "c5ba",
-      "leaveBalance": 20,
+      "leaveBalance": 19,
       "unpaidLeaves": 0,
       "id": "d9a9"
     },
@@ -118,7 +118,7 @@
       "employeeId": "2184",
       "startDate": "2025-05-22T18:30:00.000Z",
       "endDate": "2025-05-22T18:30:00.000Z",
-      "type": "unpaid",
+      "type": "paid",
       "status": "pending",
       "requestedBy": "Dharani (dharani@pal.tech)",
       "approvedBy": null,
@@ -138,6 +138,45 @@
       "currentManager": "2183",
       "reason": "Sick",
       "createdAt": "2025-05-19T10:50:00.349Z"
+    },
+    {
+      "id": "1747682855457",
+      "employeeId": "d9a9",
+      "startDate": "2025-05-19T18:30:00.000Z",
+      "endDate": "2025-05-21T18:30:00.000Z",
+      "type": "unpaid",
+      "status": "pending",
+      "requestedBy": "Vijay Inampudi (vijay@pal.tech)",
+      "approvedBy": null,
+      "currentManager": "c5ba",
+      "reason": "Sick",
+      "createdAt": "2025-05-19T19:27:35.457Z"
+    },
+    {
+      "id": "1747682877375",
+      "employeeId": "d9a9",
+      "startDate": "2025-05-27T18:30:00.000Z",
+      "endDate": "2025-05-27T18:30:00.000Z",
+      "type": "paid",
+      "status": "pending",
+      "requestedBy": "Vijay Inampudi (vijay@pal.tech)",
+      "approvedBy": null,
+      "currentManager": "c5ba",
+      "reason": "Sick",
+      "createdAt": "2025-05-19T19:27:57.375Z"
+    },
+    {
+      "id": "1747682877377",
+      "employeeId": "d9a9",
+      "startDate": "2025-05-27T18:30:00.000Z",
+      "endDate": "2025-05-27T18:30:00.000Z",
+      "type": "paid",
+      "status": "approved",
+      "requestedBy": "Krishna Inampudi (vijay@pal.tech)",
+      "approvedBy": null,
+      "currentManager": "c5ba",
+      "reason": "Sick",
+      "createdAt": "2025-05-19T19:27:57.375Z"
     }
   ]
 }

@@ -198,10 +198,10 @@ const LeaveManagement: React.FC = () => {
 
       let updatedLeaveBalance = user?.leaveBalance || 20;
       let updatedUnpaid = user?.unpaidLeaves || 0;
+      const days = businessDaysCount;
       if (!isEditing) {
-        const days = businessDaysCount;
         if (leaveType === "paid") {
-          if (days > (user && user.leaveBalance || 0)) {
+          if (days > ((user && user.leaveBalance) || 0)) {
             toast.error("Insufficient paid leave balance");
             return;
           }
@@ -224,7 +224,33 @@ const LeaveManagement: React.FC = () => {
         );
         toast.success("Leave application submitted successfully!");
       } else {
+        const originalLeave = userLeaves?.find((l) => l.id === editLeaveId);
+        const originalDays = businessDaysCount;
+        const originalType = originalLeave?.type;
+
+        if (originalType === "paid") {
+          updatedLeaveBalance += originalDays;
+        } else {
+          updatedUnpaid -= originalDays;
+        }
+
+        if (leaveType === "paid") {
+          if (updatedLeaveBalance < days) {
+            toast.error("Insufficient paid leave balance");
+            return;
+          }
+          updatedLeaveBalance -= days;
+        } else {
+          updatedUnpaid += days;
+        }
+
         await leaveApi.update(editLeaveId as string, leaveApplication);
+
+        await userApi.updateFields(user?.id as string, {
+          leaveBalance: updatedLeaveBalance,
+          unpaidLeaves: updatedUnpaid,
+        });
+
         toast.success("Leave application updated successfully!");
       }
       await queryClient.invalidateQueries({ queryKey: ["leave-applications"] });
@@ -261,9 +287,9 @@ const LeaveManagement: React.FC = () => {
               filterDate={(date) => {
                 // Filter out weekends
                 if (isWeekend(date)) return false;
-                
+
                 // Filter out holidays
-                const dateString = format(date, 'yyyy-MM-dd');
+                const dateString = format(date, "yyyy-MM-dd");
                 return !HOLIDAYS.includes(dateString);
               }}
               className="date-picker-input"

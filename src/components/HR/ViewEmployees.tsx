@@ -1,15 +1,25 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { FaSpinner, FaUserEdit, FaTrash } from "react-icons/fa";
+import {
+  FaSpinner,
+  FaUserEdit,
+  FaTrash,
+  FaSortDown,
+  FaSortUp,
+} from "react-icons/fa";
 import { toast } from "react-toastify";
 import CreateEditEmployee from "./CreateEditEmployee";
 import { User } from "../../types";
 import { FaPlus, FaUser } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/apiCalls";
-import { DEFAULT_MANAGER_ID } from "../../constants";
+import { DEFAULT_MANAGER_ID, DEPARTMENTS, ROLES } from "../../constants";
 import "../css/Table.css";
 
+type SortConfig = {
+  key: keyof User;
+  direction: "asc" | "desc";
+};
 const ViewEmployees: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<Partial<User>>();
@@ -70,6 +80,56 @@ const ViewEmployees: React.FC = () => {
     setIsModalOpen(true);
   };
 
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [filterRole, setFilterRole] = useState<string>("All");
+  const [filterDept, setFilterDept] = useState<string>("All");
+  const [sortConfig, setSortConfig] = useState<SortConfig | null>({
+    key: "username",
+    direction: "asc",
+  });
+
+  const filteredUsers = useMemo(() => {
+    if (!users) return [];
+    let result = [...users];
+
+    // Search
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      result = result.filter(
+        (u) =>
+          u.username.toLowerCase().includes(term) ||
+          u.email.toLowerCase().includes(term)
+      );
+    }
+    if (filterRole !== "All") {
+      result = result.filter((u) => u.role === filterRole);
+    }
+    if (filterDept !== "All") {
+      result = result.filter((u) => u.department === filterDept);
+    }
+    if (sortConfig) {
+      result.sort((a, b) => {
+        const aVal = a[sortConfig.key] || "";
+        const bVal = b[sortConfig.key] || "";
+        if (aVal < bVal) return sortConfig.direction === "asc" ? -1 : 1;
+        if (aVal > bVal) return sortConfig.direction === "asc" ? 1 : -1;
+        return 0;
+      });
+    }
+    return result;
+  }, [users, searchTerm, filterRole, filterDept, sortConfig]);
+
+  const handleSort = (key: keyof User) => {
+    let direction: "asc" | "desc" = "asc";
+    if (
+      sortConfig &&
+      sortConfig.key === key &&
+      sortConfig.direction === "asc"
+    ) {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
   const handleDelete = (id: string) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this user?"
@@ -117,6 +177,42 @@ const ViewEmployees: React.FC = () => {
 
   return (
     <>
+      <div className="table-controls">
+        <div>
+          <input
+            type="text"
+            placeholder="Search by name or email"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <div>
+          <select
+            value={filterRole}
+            onChange={(e) => setFilterRole(e.target.value)}
+          >
+            <option>Role</option>
+            {ROLES.map((r) => (
+              <option key={r} value={r}>
+                {r}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <select
+            value={filterDept}
+            onChange={(e) => setFilterDept(e.target.value)}
+          >
+            <option>Departments</option>
+            {DEPARTMENTS.map((d) => (
+              <option key={d} value={d}>
+                {d}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
       <div className="table-container">
         <div className="add-employee-btn">
           <button onClick={handleAddEmployee}>
@@ -129,7 +225,15 @@ const ViewEmployees: React.FC = () => {
           <thead className="table-header">
             <tr>
               <th>Index</th>
-              <th>Username</th>
+              <th onClick={() => handleSort("username")}>
+                Username{" "}
+                {sortConfig?.key === "username" &&
+                  (sortConfig.direction === "asc" ? (
+                    <FaSortUp />
+                  ) : (
+                    <FaSortDown />
+                  ))}
+              </th>
               <th>Email</th>
               <th>Role</th>
               <th>Department</th>
@@ -137,7 +241,7 @@ const ViewEmployees: React.FC = () => {
             </tr>
           </thead>
           <tbody className="table-body">
-            {users?.map((user, index) => (
+            {filteredUsers?.map((user, index) => (
               <tr key={user.id}>
                 <td>{index + 1}</td>
                 <td>{user.username}</td>

@@ -20,6 +20,12 @@ export const DEPARTMENTS = [
   "Java",
 ];
 
+export const ROLES=[
+  "employee",
+  "manager",
+  "HR"
+]
+
 export const LEAVE_BALANCE = 20;
 
 export const DEFAULT_MANAGER_ID="2183"
