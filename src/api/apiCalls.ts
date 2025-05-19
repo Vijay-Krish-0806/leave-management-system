@@ -3,9 +3,7 @@ import { User, LeaveApplication } from "../types";
 
 const API_URL = "http://localhost:3001";
 
-/**
- * User related API calls
- */
+/* User related API calls */
 export const userApi = {
   // Get all users
   getAll: async (): Promise<User[]> => {
@@ -118,13 +116,10 @@ export const leaveApi = {
   },
 
   // Get leave applications by employee ID
-  getByEmployeeId: async (
-    employeeId: string,
-    sortOrder = "desc"
-  ): Promise<LeaveApplication[]> => {
+  getByEmployeeId: async (employeeId: string): Promise<LeaveApplication[]> => {
     try {
       const response = await axios.get<LeaveApplication[]>(
-        `${API_URL}/leaveApplications/?employeeId=${employeeId}&_sort=createdAt&_order=${sortOrder}`
+        `${API_URL}/leaveApplications/?employeeId=${employeeId}&_sort=createdAt&_order=desc`
       );
       return response.data;
     } catch (error) {
@@ -200,10 +195,10 @@ export const leaveApi = {
     }
   },
 
-  delete:async(leaveId:string):Promise<LeaveApplication>=>{
+  delete: async (leaveId: string): Promise<LeaveApplication> => {
     try {
       const response = await axios.delete<LeaveApplication>(
-        `${API_URL}/leaveApplications/${leaveId}`,
+        `${API_URL}/leaveApplications/${leaveId}`
       );
       return response.data;
     } catch (error) {
@@ -228,9 +223,7 @@ export const leaveApi = {
       );
 
       await Promise.all(updatePromises);
-      console.log(
-        `Updated ${updatePromises.length} leave applications for employee ${employeeId} with manager ${newManagerId}`
-      );
+     
     } catch (error) {
       console.error("Error updating leave applications manager:", error);
       throw error;

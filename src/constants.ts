@@ -1,0 +1,25 @@
+
+
+export const HOLIDAYS = [
+  "2025-01-01",
+  "2025-01-14",
+  "2025-08-15",
+  "2025-08-24",
+  "2025-10-02",
+  "2025-10-24",
+]
+
+export const DEPARTMENTS = [
+  "CEO",
+  ".NET",
+  "Frontend Developer",
+  "Project Management",
+  "Data",
+  "Human Resources",
+  "Python",
+  "Java",
+];
+
+export const LEAVE_BALANCE = 20;
+
+export const DEFAULT_MANAGER_ID="2183"

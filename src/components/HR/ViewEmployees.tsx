@@ -3,11 +3,12 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FaSpinner, FaUserEdit, FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import CreateEditEmployee from "./CreateEditEmployee";
-import "../css/Table.css";
 import { User } from "../../types";
 import { FaPlus, FaUser } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/apiCalls";
+import { DEFAULT_MANAGER_ID } from "../../constants";
+import "../css/Table.css";
 
 const ViewEmployees: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,17 +25,15 @@ const ViewEmployees: React.FC = () => {
     queryFn: api.user.getAll,
   });
   const countOfHRs = users?.filter((user) => user.role === "HR");
-  const defaultManager = users?.find((user) => user.id === "2183");
+  const defaultManager = users?.find((user) => user.id === DEFAULT_MANAGER_ID);
 
   const deleteUser = async (id: string) => {
-    // Check if we can delete this user
     if (
       (countOfHRs &&
         countOfHRs.length <= 1 &&
         users?.find((u) => u.id === id)?.role === "HR") ||
       (defaultManager && id === defaultManager.id)
     ) {
-      toast.error("Cannot delete the User");
       throw new Error("Cannot delete the user");
     }
 
@@ -47,7 +46,6 @@ const ViewEmployees: React.FC = () => {
       await api.combined.deleteUserAndCleanup(id, defaultManager.id as string);
       return { success: true };
     } catch (error) {
-      console.error("Error during user deletion process:", error);
       throw error;
     }
   };
@@ -61,9 +59,8 @@ const ViewEmployees: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ["leaveApplications"] });
       toast.success("User deleted successfully");
     },
-    onError: (error) => {
+    onError: () => {
       toast.error("Failed to delete user");
-      console.error(error);
     },
   });
 
@@ -135,6 +132,7 @@ const ViewEmployees: React.FC = () => {
               <th>Username</th>
               <th>Email</th>
               <th>Role</th>
+              <th>Department</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -145,6 +143,7 @@ const ViewEmployees: React.FC = () => {
                 <td>{user.username}</td>
                 <td>{user.email}</td>
                 <td>{user.role}</td>
+                <td>{user.department}</td>
                 <td>
                   <button
                     className="user-edit-button"

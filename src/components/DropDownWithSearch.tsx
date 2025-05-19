@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { FaChevronDown, FaSearch } from "react-icons/fa";
 import { FaChevronUp, FaX } from "react-icons/fa6";
 import "./css/DropDownSearch.css"
-type UserProps = { id: string; username: string };
+import { User } from "../types";
+type UserProps = User;
 
 type Props = {
   usersList: UserProps[];
@@ -73,7 +74,7 @@ const DropDownWithSearch: React.FC<Props> = ({
                 placeholder={
                   selectedOption ? selectedOption.username : placeholder
                 }
-                value={initialUser?initialUser.username:search}
+                value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 onClick={(e) => e.stopPropagation()}
                 onFocus={() => setIsOpen(true)}
@@ -105,7 +106,8 @@ const DropDownWithSearch: React.FC<Props> = ({
       <input
         type="hidden"
         name="assigned"
-        value={selectedOption ? selectedOption.id : ""}
+        value={(initialUser ? initialUser.managerId: selectedOption?selectedOption.id:"") }
+
         required={required}
       />
     </div>

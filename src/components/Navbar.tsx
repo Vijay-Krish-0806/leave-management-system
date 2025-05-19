@@ -16,13 +16,19 @@ const Navbar = () => {
   };
 
   const handleLogoClick = () => {
-    navigate("/");
+    window.location.href = "/";
   };
 
   return (
     <div className="navbar-container">
       <div className="navbar-logo" onClick={handleLogoClick}>
-        <img src="/paltech_logo.svg" alt="logo" width={"30px"} height={"30px"} style={{"marginRight":"5px"}} />
+        <img
+          src="/paltech_logo.svg"
+          alt="logo"
+          width={"30px"}
+          height={"30px"}
+          style={{ marginRight: "5px" }}
+        />
         Paltech
       </div>
       <div className="navbar-right">

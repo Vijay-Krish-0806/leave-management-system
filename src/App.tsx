@@ -25,11 +25,7 @@ const App: React.FC = () => {
         {/* Protected dashboard routes */}
         <Route
           path="/dashboard"
-          element={
-            <ProtectedRoute
-              allowedRoles={Object.values(ROLES)}
-            />
-          }
+          element={<ProtectedRoute allowedRoles={Object.values(ROLES)} />}
         >
           <Route element={<DashBoardLayout />}>
             {/* Role-specific routes */}
@@ -39,11 +35,9 @@ const App: React.FC = () => {
                 <Route
                   key={role}
                   path={role}
-                  element={
-                    <ProtectedRoute  allowedRoles={[role]} />
-                  }
+                  element={<ProtectedRoute allowedRoles={[role]} />}
                 >
-                  <Route path="" element={<RoleComponent />}>
+                  <Route element={<RoleComponent />}>
                     {/* Common routes available to this role */}
                     {commonRoutes.map((route) => (
                       <Route

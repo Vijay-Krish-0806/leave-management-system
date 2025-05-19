@@ -1,53 +1,19 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { FaCheck, FaSpinner } from "react-icons/fa";
 import { eachDayOfInterval, format, isWeekend } from "date-fns";
-import "../css/Table.css";
 import { FaX } from "react-icons/fa6";
 import { toast } from "react-toastify";
 import { LeaveApplication, User } from "../../types";
-
-const API_URL = "http://localhost:3001";
+import { leaveApi, userApi } from "../../api/apiCalls";
+import "../css/Table.css";
 
 const ViewActiveLeaves: React.FC = () => {
   const auth = useSelector((state: RootState) => state.auth);
   const queryClient = useQueryClient();
 
-  // Fetch all leave applications
-  const getLeaveApplications = async (): Promise<LeaveApplication[]> => {
-    try {
-      const response = await axios.get(`${API_URL}/leaveApplications`);
-      return response.data;
-    } catch (error) {
-      console.error("Failed to fetch leave applications:", error);
-      throw error;
-    }
-  };
-  
-  // Update leave status
-  const updateLeaveStatus = async (
-    updatedLeave: LeaveApplication
-  ): Promise<LeaveApplication> => {
-    const response = await axios.put<LeaveApplication>(
-      `${API_URL}/leaveApplications/${updatedLeave.id}`,
-      updatedLeave
-    );
-    return response.data;
-  };
-
-  // Update user data including leave balances
-  const updateUserData = async (updatedUser: User): Promise<User> => {
-    const response = await axios.put<User>(
-      `${API_URL}/users/${updatedUser.id}`,
-      updatedUser
-    );
-    return response.data;
-  };
-
-  // Fetch active leaves assigned to current manager
   const {
     data: activeLeaves,
     isLoading,
@@ -55,7 +21,7 @@ const ViewActiveLeaves: React.FC = () => {
     error,
   } = useQuery({
     queryKey: ["leave-applications"],
-    queryFn: getLeaveApplications,
+    queryFn: leaveApi.getAll,
     select: (data) => {
       return data.filter(
         (leave) =>
@@ -64,9 +30,8 @@ const ViewActiveLeaves: React.FC = () => {
     },
   });
 
-  // Mutation for updating leave status
   const approveRejectMutation = useMutation({
-    mutationFn: updateLeaveStatus,
+    mutationFn: (leave: LeaveApplication) => leaveApi.update(leave.id, leave),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["leave-applications"] });
     },
@@ -76,16 +41,16 @@ const ViewActiveLeaves: React.FC = () => {
     },
   });
 
-  // Mutation for updating user data
   const updateUserMutation = useMutation({
-    mutationFn: updateUserData,
+    mutationFn: (userData: User) =>
+      userApi.update(userData.id as string, userData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
     onError: (error) => {
       toast.error("Failed to update user's leave balance");
       console.error("User update error:", error);
-    }
+    },
   });
 
   // Handle approve leave action
@@ -104,30 +69,31 @@ const ViewActiveLeaves: React.FC = () => {
 
   const handleReject = async (leave: LeaveApplication) => {
     try {
-      await approveRejectMutation.mutateAsync(
-        { ...leave, status: "rejected", approvedBy: auth.id }
-      );
-      
-      const response = await axios.get(`${API_URL}/users/${leave.employeeId}`);
-      const userData = response.data;
-      
+      await approveRejectMutation.mutateAsync({
+        ...leave,
+        status: "rejected",
+        approvedBy: auth.id,
+      });
+
+      const userData = await userApi.getById(leave.employeeId);
       const allDays = eachDayOfInterval({
         start: new Date(leave.startDate),
         end: new Date(leave.endDate),
       });
-      const workingDays = allDays.filter(d => !isWeekend(d)).length;
-      
+      const workingDays = allDays.filter((d) => !isWeekend(d)).length;
       if (leave.type === "paid") {
         userData.leaveBalance += workingDays;
       } else if (leave.type === "unpaid") {
-        userData.unpaidLeaves = Math.max(0, userData.unpaidLeaves - workingDays);
+        userData.unpaidLeaves = Math.max(
+          0,
+          (userData.unpaidLeaves || 0) - workingDays
+        );
       }
-      
+
+      // Update user with new balance
       await updateUserMutation.mutateAsync(userData);
-      
-      toast.error(
-        `Leave request for ${leave.requestedBy} has been rejected`
-      );
+
+      toast.error(`Leave request for ${leave.requestedBy} has been rejected`);
     } catch (error) {
       console.error("Error in reject process:", error);
       toast.error("Failed to complete the rejection process");
@@ -154,15 +120,6 @@ const ViewActiveLeaves: React.FC = () => {
     );
   }
 
-  // No data state
-  if (!activeLeaves || activeLeaves.length === 0) {
-    return (
-      <div className="no-data-message">
-        <p>No pending leave requests to review.</p>
-      </div>
-    );
-  }
-
   // Render the leave requests table
   return (
     <div className="table-container">
@@ -180,59 +137,73 @@ const ViewActiveLeaves: React.FC = () => {
           </tr>
         </thead>
         <tbody className="table-body">
-          {activeLeaves.map((leave, index) => {
-            const allDays = eachDayOfInterval({
-              start: new Date(leave.startDate),
-              end: new Date(leave.endDate),
-            });
-            const workingDays = allDays.filter(d => !isWeekend(d)).length;
-            
-            return (
-              <tr key={leave.id}>
-                <td>{index + 1}</td>
-                <td>{leave.requestedBy}</td>
-                <td>
-                  {format(new Date(leave.startDate), "PPP")} -{" "}
-                  {format(new Date(leave.endDate), "PPP")}
-                </td>
-                <td>{workingDays} working days</td>
-                <td>{leave.type}</td>
-                <td>{leave.reason}</td>
-                <td>
-                  <button
-                    className="approve-button"
-                    title="Approve Leave Request"
-                    onClick={() => handleApprove(leave)}
-                    disabled={approveRejectMutation.isPending || updateUserMutation.isPending}
-                  >
-                    {(approveRejectMutation.isPending || updateUserMutation.isPending) ? (
-                      <FaSpinner className="spin" />
-                    ) : (
-                      <>
-                        Approve
-                        <FaCheck />
-                      </>
-                    )}
-                  </button>
-                  <button
-                    className="reject-button"
-                    title="Reject Leave Request"
-                    onClick={() => handleReject(leave)}
-                    disabled={approveRejectMutation.isPending || updateUserMutation.isPending}
-                  >
-                    {(approveRejectMutation.isPending || updateUserMutation.isPending) ? (
-                      <FaSpinner className="spin" />
-                    ) : (
-                      <>
-                        Reject
-                        <FaX />
-                      </>
-                    )}
-                  </button>
-                </td>
-              </tr>
-            );
-          })}
+          {activeLeaves && activeLeaves.length > 0 ? (
+            activeLeaves.map((leave, index) => {
+              const allDays = eachDayOfInterval({
+                start: new Date(leave.startDate),
+                end: new Date(leave.endDate),
+              });
+              const workingDays = allDays.filter((d) => !isWeekend(d)).length;
+
+              return (
+                <tr key={leave.id}>
+                  <td>{index + 1}</td>
+                  <td>{leave.requestedBy}</td>
+                  <td>
+                    {format(new Date(leave.startDate), "PPP")} -{" "}
+                    {format(new Date(leave.endDate), "PPP")}
+                  </td>
+                  <td>{workingDays} working days</td>
+                  <td>{leave.type}</td>
+                  <td>{leave.reason}</td>
+                  <td>
+                    <button
+                      className="approve-button"
+                      title="Approve Leave Request"
+                      onClick={() => handleApprove(leave)}
+                      disabled={
+                        approveRejectMutation.isPending ||
+                        updateUserMutation.isPending
+                      }
+                    >
+                      {approveRejectMutation.isPending ||
+                      updateUserMutation.isPending ? (
+                        <FaSpinner className="spin" />
+                      ) : (
+                        <>
+                          Approve
+                          <FaCheck />
+                        </>
+                      )}
+                    </button>
+                    <button
+                      className="reject-button"
+                      title="Reject Leave Request"
+                      onClick={() => handleReject(leave)}
+                      disabled={
+                        approveRejectMutation.isPending ||
+                        updateUserMutation.isPending
+                      }
+                    >
+                      {approveRejectMutation.isPending ||
+                      updateUserMutation.isPending ? (
+                        <FaSpinner className="spin" />
+                      ) : (
+                        <>
+                          Reject
+                          <FaX />
+                        </>
+                      )}
+                    </button>
+                  </td>
+                </tr>
+              );
+            })
+          ) : (
+            <tr>
+              <td className="no-leave-message" colSpan={8}>No active leaves</td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>

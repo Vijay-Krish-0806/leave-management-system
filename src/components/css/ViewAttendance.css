@@ -1,30 +1,31 @@
 .leave-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
-  border-radius: 8px;
+  padding: clamp(15px, 2vw, 20px);
 }
 
 .chart-and-stats-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 30px;
-  justify-content: space-between;
+  gap: clamp(20px, 3vw, 30px);
+  margin-bottom: 20px;
+}
+.card-base {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: clamp(15px, 2vw, 20px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-base:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
 }
 
 .chart-container {
   flex: 1 1 45%;
   min-width: 300px;
-  background-color: #ffffff;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-.chart-container:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
 }
 
 .leave-stats {
@@ -32,24 +33,11 @@
   min-width: 300px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-}
-
-.leave-card {
-  background-color: #ffffff;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-.leave-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  gap: clamp(15px, 2vw, 20px);
 }
 
 .leave-card-title {
-  font-size: 18px;
+  font-size: clamp(16px, 1.5vw, 18px);
   font-weight: 600;
   color: #333;
   margin-bottom: 15px;
@@ -64,6 +52,10 @@
   margin-bottom: 12px;
 }
 
+.leave-metric:last-child {
+  margin-bottom: 0;
+}
+
 .leave-label {
   display: flex;
   align-items: center;
@@ -76,6 +68,7 @@
   height: 16px;
   border-radius: 50%;
   margin-right: 8px;
+  flex-shrink: 0;
 }
 
 .color-paid {
@@ -87,25 +80,58 @@
 }
 
 .leave-value {
-  font-size: 18px;
+  font-size: clamp(16px, 1.5vw, 18px);
   font-weight: 700;
   color: #333;
 }
 
 .leave-value-infinity {
-  font-size: 24px;
-  color: #FFC107; 
+  font-size: clamp(20px, 2vw, 24px);
+  color: #FFC107;
 }
 
-/* Media query for responsiveness */
+@media (max-width: 992px) {
+  .chart-and-stats-container {
+    gap: 20px;
+  }
+}
+
 @media (max-width: 768px) {
   .chart-and-stats-container {
     flex-direction: column;
-    align-items: center;
   }
-
-  .chart-container, .leave-stats {
+  
+  .chart-container, 
+  .leave-stats {
     flex: 1 1 100%;
-    min-width: 100%;
+    width: 100%;
+    min-width: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  .leave-container {
+    padding: 10px;
+  }
+  
+  .card-base {
+    padding: 15px;
+  }
+  
+  .leave-card-title {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  
+  .leave-label {
+    font-size: 13px;
+  }
+  
+  .leave-value {
+    font-size: 16px;
+  }
+  
+  .leave-value-infinity {
+    font-size: 20px;
   }
 }

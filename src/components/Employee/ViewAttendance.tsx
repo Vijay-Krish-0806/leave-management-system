@@ -4,9 +4,8 @@ import { AgChartOptions } from "ag-charts-community";
 import "../css/ViewAttendance.css";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
-import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
-import { User } from "../../types";
+import { userApi } from "../../api/apiCalls";
 
 interface LeaveData {
   type: string;
@@ -18,25 +17,32 @@ interface LeaveData {
 const LeaveBalanceChart: React.FC = () => {
   const userId = useSelector((state: RootState) => state.auth.id);
 
-  // Using React Query for data fetching
-  const { data: userData, isLoading, isError } = useQuery({
-    queryKey: ['user', userId],
-    queryFn: async () => {
-      if (!userId) throw new Error("User ID is required");
-      const response = await axios.get<User>(`http://localhost:3001/users/${userId}`);
-      return response.data;
-    },
+  const {
+    data: userData,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["users", userId],
+    queryFn: () => userApi.getById(userId),
     enabled: !!userId,
   });
   if (isLoading) {
-    return <div className="loading-indicator">Loading leave balance data...</div>;
+    return (
+      <div className="loading-indicator">Loading leave balance data...</div>
+    );
   }
   if (isError || !userData) {
-    return <div className="error-message">Failed to load leave balance data. Please try again later.</div>;
+    return (
+      <div className="error-message">
+        Failed to load leave balance data. Please try again later.
+      </div>
+    );
   }
 
-  const paidLeavesConsumed = userData?.leaveBalance !== undefined ? 20 - userData.leaveBalance : 0;
-  const unpaidLeavesConsumed = userData?.unpaidLeaves !== undefined ? userData.unpaidLeaves : 0;
+  const paidLeavesConsumed =
+    userData?.leaveBalance !== undefined ? 20 - userData.leaveBalance : 0;
+  const unpaidLeavesConsumed =
+    userData?.unpaidLeaves !== undefined ? userData.unpaidLeaves : 0;
 
   const leaveData: LeaveData[] = [
     {
@@ -71,12 +77,11 @@ const LeaveBalanceChart: React.FC = () => {
         angleKey: "value",
         calloutLabelKey: "category",
         sectorLabelKey: "value",
-        fills: ["#FF9800", "#4CAF50"], 
+        fills: ["#FF9800", "#4CAF50"],
         strokes: ["#F57C00", "#3e8e41"],
         strokeWidth: 2,
         cursor: "pointer",
         innerRadiusRatio: 0.6,
-        
       },
     ],
     legend: {

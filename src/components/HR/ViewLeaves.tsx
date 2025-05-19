@@ -1,18 +1,9 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { FaSpinner } from "react-icons/fa";
-import { LeaveApplication } from "../../types";
 import { format } from "date-fns";
 import "../css/Table.css";
-
-// API URL
-const API_URL = "http://localhost:3001/leaveApplications";
-
-const fetchLeaves = async (): Promise<LeaveApplication[]> => {
-  const response = await axios.get(API_URL);
-  return response.data;
-};
+import { leaveApi } from "../../api/apiCalls";
 
 const ViewLeaves: React.FC = () => {
   const {
@@ -21,8 +12,8 @@ const ViewLeaves: React.FC = () => {
     data: leaves,
     error,
   } = useQuery({
-    queryKey: ["leaveApplications"],
-    queryFn: fetchLeaves,
+    queryKey: ["leave-applications"],
+    queryFn: leaveApi.getAll,
   });
 
   if (isLoading) {

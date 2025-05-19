@@ -1,17 +1,17 @@
-.loginContainer {
+.login-container {
   display: flex;
   height: 100vh;
   width: 100vw;
   font-family: "Segoe UI", Arial, sans-serif;
 }
 
-.leftSide {
+.left-side {
   flex: 1;
   background: #0146a7;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 6rem;
+  font-size: clamp(3rem, 6vw, 6rem);
   font-weight: bold;
   color: #fff;
   user-select: none;
@@ -21,28 +21,22 @@
   color: #e3a004;
 }
 
-.rightSide {
+.right-side {
   flex: 1;
   background: #eea908;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 20px;
 }
 
-.formWrapper {
+.form-wrapper {
   background: white;
-  padding: 40px 32px;
+  padding: clamp(20px, 5vw, 40px);
   border-radius: 12px;
   box-shadow: 0 4px 32px rgba(0, 0, 0, 0.1);
-  min-width: 400px;
-  max-width: 500px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.form-container{
   width: 100%;
+  max-width: 500px;
 }
 
 h1 {
@@ -52,7 +46,7 @@ h1 {
   text-align: center;
 }
 
-.inputContainer {
+.input-container {
   margin-bottom: 20px;
   width: 100%;
   position: relative;
@@ -65,24 +59,35 @@ label {
   color: #222;
 }
 
-.inputField {
+.input-field {
   width: 100%;
   padding: 11px 40px 11px 12px;
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 1rem;
   box-sizing: border-box;
+  transition: border-color 0.2s;
 }
 
-.passwordIcon {
+.input-field:focus {
+  border-color: #036bfc;
+  outline: none;
+}
+
+.password-icon {
   position: absolute;
-  right: 50px;
+  right: 12px;
   top: 40px;
   cursor: pointer;
-  color: #000000;
+  color: #666;
+  transition: color 0.2s;
 }
 
-.submitBtn {
+.password-icon:hover {
+  color: #000;
+}
+
+.submit-btn {
   width: 100%;
   padding: 12px;
   background: #036bfc;
@@ -92,14 +97,22 @@ label {
   font-size: 1.1rem;
   font-weight: bold;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap:10px
 }
 
-.submitBtn:hover {
+.submit-btn:hover {
   background: #024da1;
 }
 
-.errorMsg {
+.submit-btn:active {
+  transform: translateY(1px);
+}
+
+.error-msg {
   color: #d8000c;
   background: #ffd2d2;
   border: 1px solid #d8000c;
@@ -109,4 +122,40 @@ label {
   width: 100%;
   text-align: center;
   font-weight: 500;
+}
+
+/* Responsive styles */
+@media screen and (max-width: 1024px) {
+  .left-side {
+    font-size: 4rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .login-container {
+    flex-direction: column;
+  }
+
+  .left-side {
+    display: none;
+  }
+
+  .right-side {
+    flex: 1;
+    min-height: 100vh;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .form-wrapper {
+    padding: 20px 15px;
+  }
+
+  h1 {
+    font-size: 1.3rem;
+  }
+
+  .submit-btn {
+    font-size: 1rem;
+  }
 }

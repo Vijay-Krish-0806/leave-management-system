@@ -4,18 +4,19 @@ import { eachDayOfInterval, format, isWeekend } from "date-fns";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { LeaveApplication } from "../../types";
-import { FaArrowLeft, FaEnvelope, FaUserTie, FaBuilding, FaUserFriends } from "react-icons/fa";
+import {
+  FaArrowLeft,
+  FaEnvelope,
+  FaUserTie,
+  FaBuilding,
+  FaUserFriends,
+} from "react-icons/fa";
 import "../css/EmployeeDetails.css";
-
+import { userApi } from "../../api/apiCalls";
 
 const EmployeeDetails = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
-  
-  const getUser = async () => {
-    const response = await axios.get(`http://localhost:3001/users/${userId}`);
-    return response.data;
-  };
 
   const getAllLeaves = async () => {
     const response = await axios.get(
@@ -31,10 +32,10 @@ const EmployeeDetails = () => {
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["employee"],
-    queryFn: getUser,
+    queryKey: ["users", userId],
+    queryFn: () => userApi.getById(userId as string),
   });
-  
+
   const {
     data: userLeaves,
     isLoading: isLeavesLoading,
@@ -47,7 +48,9 @@ const EmployeeDetails = () => {
   const getManagerName = async () => {
     if (userData && userData.managerId) {
       try {
-        const res = await axios.get(`http://localhost:3001/users/${userData.managerId}`);
+        const res = await axios.get(
+          `http://localhost:3001/users/${userData.managerId}`
+        );
         setManagerName(res.data.username);
       } catch (e) {
         console.error("Error fetching manager:", e);
@@ -75,7 +78,7 @@ const EmployeeDetails = () => {
           <FaArrowLeft /> Go back
         </button>
       </div>
-      
+
       <div className="employee-content">
         <div className="user-card">
           <div className="user-header">
@@ -84,7 +87,7 @@ const EmployeeDetails = () => {
             </div>
             <h2>{userData?.username || "User"}</h2>
           </div>
-          
+
           <div className="user-info-list">
             <div className="info-item">
               <FaEnvelope className="info-icon" />
@@ -93,7 +96,7 @@ const EmployeeDetails = () => {
                 <span className="info-value">{userData?.email || "N/A"}</span>
               </div>
             </div>
-            
+
             <div className="info-item">
               <FaUserTie className="info-icon" />
               <div>
@@ -101,25 +104,27 @@ const EmployeeDetails = () => {
                 <span className="info-value">{userData?.role || "N/A"}</span>
               </div>
             </div>
-            
+
             <div className="info-item">
               <FaUserFriends className="info-icon" />
               <div>
                 <span className="info-label">Reports to</span>
-                <span className="info-value">{managerName || userData?.managerName || "N/A"}</span>
+                <span className="info-value">{managerName || "N/A"}</span>
               </div>
             </div>
-            
+
             <div className="info-item">
               <FaBuilding className="info-icon" />
               <div>
                 <span className="info-label">Department</span>
-                <span className="info-value">{userData?.department || "N/A"}</span>
+                <span className="info-value">
+                  {userData?.department || "N/A"}
+                </span>
               </div>
             </div>
           </div>
         </div>
-        
+
         <div className="leaves-section">
           <h2>Leave History</h2>
           {isLeavesLoading ? (
@@ -145,7 +150,7 @@ const EmployeeDetails = () => {
                         <td>{format(new Date(leave.createdAt), "PPP")}</td>
                         <td>
                           <span className="date-range">
-                            {format(new Date(leave.startDate), "PPP")} - {" "}
+                            {format(new Date(leave.startDate), "PPP")} -{" "}
                             {format(new Date(leave.endDate), "PPP")}
                           </span>
                           <span className="working-days">
@@ -161,7 +166,9 @@ const EmployeeDetails = () => {
                         <td className="leave-type">{leave.type}</td>
                         <td>{leave.reason}</td>
                         <td>
-                          <span className={`leave-status ${leave.status.toLowerCase()}`}>
+                          <span
+                            className={`leave-status ${leave.status.toLowerCase()}`}
+                          >
                             {leave.status}
                           </span>
                         </td>
@@ -170,7 +177,8 @@ const EmployeeDetails = () => {
                   ) : (
                     <tr>
                       <td colSpan={5} className="no-leaves-message">
-                        No leave history found. Apply for leave to see your history here.
+                        No leave history found. Apply for leave to see your
+                        history here.
                       </td>
                     </tr>
                   )}

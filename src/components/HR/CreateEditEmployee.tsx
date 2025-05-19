@@ -9,122 +9,41 @@ import {
   FaUserTie,
   FaUserTag,
 } from "react-icons/fa";
-import axios from "axios";
 import { toast } from "react-toastify";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { LeaveApplication, User } from "../../types";
+import { User } from "../../types";
 import "../css/HR.css";
 import DropDownWithSearch from "../DropDownWithSearch";
+import { userApi, leaveApi } from "../../api/apiCalls"; // Import API functions
+import { DEPARTMENTS, LEAVE_BALANCE } from "../../constants";
 
 interface EmployeeFormProps {
   isEditMode?: boolean;
   initialUser?: User;
   onClose?: () => void;
-  isModalOpen:boolean
+  isModalOpen: boolean;
 }
-const departments = [
-  "CEO",
-  ".NET",
-  "Frontend Developer",
-  "Project Management",
-  "Data",
-  "Human Resources",
-  "Python",
-  "Java",
-];
-const getAllUsers = async () => {
-  try {
-    const response = await axios.get("http://localhost:3001/users");
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching users:", error);
-    throw error;
-  }
-};
 
-const createUser = async (newUser: Omit<User, "id">): Promise<User> => {
-  try {
-    const response = await axios.post<User>("http://localhost:3001/users", {
-      ...newUser,
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error creating user:", error);
-    throw error;
-  }
-};
-const updateUser = async (updatedUser: User): Promise<User> => {
-  try {
-    const response = await axios.put<User>(
-      `http://localhost:3001/users/${updatedUser.id}`,
-      {
-        ...updatedUser,
-      }
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Error updating user:", error);
-    throw error;
-  }
-};
 
-const getAllLeaveApplications = async (): Promise<LeaveApplication[]> => {
-  try {
-    const response = await axios.get("http://localhost:3001/leaveApplications");
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching leave applications:", error);
-    throw error;
-  }
-};
-
-const updateLeaveApplicationsForEmployee = async (
-  employeeId: string,
-  newManagerId: string
-): Promise<void> => {
-  try {
-    const leaveApplications = await getAllLeaveApplications();
-    const employeeLeaveApplications = leaveApplications.filter(
-      (application) => application.employeeId === employeeId
-    );
-
-    const updatePromises = employeeLeaveApplications.map((application) => {
-      return axios.put(
-        `http://localhost:3001/leaveApplications/${application.id}`,
-        {
-          ...application,
-          currentManager: newManagerId,
-        }
-      );
-    });
-
-    await Promise.all(updatePromises);
-
-    console.log(
-      `Updated ${updatePromises.length} leave applications for employee ${employeeId} with ${newManagerId}`
-    );
-  } catch (error) {
-    console.error("Error updating leave applications:", error);
-    throw error;
-  }
-};
 
 const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
   isEditMode = false,
   initialUser,
   onClose,
-  isModalOpen
+  isModalOpen,
 }) => {
   const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Use the userApi.getAll function from apiCalls
   const { data: usersList } = useQuery({
     queryKey: ["users"],
-    queryFn: getAllUsers,
+    queryFn: userApi.getAll,
   });
 
+  // Create mutation using userApi.create
   const createMutation = useMutation({
-    mutationFn: createUser,
+    mutationFn: userApi.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       toast.success("User created successfully");
@@ -136,8 +55,10 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
     },
   });
 
+  // Update mutation using userApi.update
   const updateMutation = useMutation({
-    mutationFn: updateUser,
+    mutationFn: (userData: User) =>
+      userApi.update(userData.id as string, userData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       toast.success("User updated successfully");
@@ -146,6 +67,26 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
     onError: (error: any) => {
       toast.error("Something went wrong while updating user");
       console.error(error);
+    },
+  });
+
+  // Leave applications update mutation
+  const updateManagerMutation = useMutation({
+    mutationFn: ({
+      employeeId,
+      managerId,
+    }: {
+      employeeId: string;
+      managerId: string;
+    }) => leaveApi.updateManagerForEmployee(employeeId, managerId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["leave-applications"] });
+    },
+    onError: (error: any) => {
+      toast.warning(
+        "Employee updated but there was an issue updating leave applications"
+      );
+      console.error("Failed to update leave applications:", error);
     },
   });
 
@@ -164,6 +105,7 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
 
       if (!username) {
         toast.error("Username is required");
+        setIsSubmitting(false);
         return;
       }
 
@@ -171,7 +113,6 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
       const role = formData.get("role") as string;
       const gender = formData.get("gender") as string;
       const managerId = formData.get("assigned") as string;
-      console.log(managerId);
       const department = formData.get("department") as string;
 
       const password = isEditMode
@@ -180,6 +121,7 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
 
       if (!password) {
         toast.error("Password is required");
+        setIsSubmitting(false);
         return;
       }
 
@@ -191,38 +133,30 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
         gender,
         department,
         managerId,
-        leaveBalance: 20,
+        leaveBalance: LEAVE_BALANCE,
         unpaidLeaves: 0,
       };
 
       if (isEditMode) {
         userData.id = initialUser?.id;
+        // Clean up undefined values
         Object.keys(userData).forEach(
           (key) =>
             userData[key as keyof User] === undefined &&
             delete userData[key as keyof User]
         );
-
         if (
           initialUser &&
           userData.managerId !== initialUser.managerId &&
           userData.id
         ) {
+          
           await updateMutation.mutateAsync(userData);
 
-          try {
-            await updateLeaveApplicationsForEmployee(
-              userData.id,
-              userData.managerId
-            );
-
-            queryClient.invalidateQueries({ queryKey: ["leave-applications"] });
-          } catch (error) {
-            console.error("Failed to update leave applications:", error);
-            toast.warning(
-              "Employee updated but there was an issue updating leave applications"
-            );
-          }
+          await updateManagerMutation.mutateAsync({
+            employeeId: userData.id,
+            managerId: userData.managerId,
+          });
         } else {
           await updateMutation.mutateAsync(userData);
         }
@@ -358,9 +292,9 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
             <DropDownWithSearch
               usersList={usersList?.filter(
                 (user: User) => user.role === "manager"
-              )}
+              ) || []}
               //@ts-ignore
-              initialUser={initialUser?.managerId}
+              initialUser={initialUser}
               placeholder="Select Manager"
               required={true}
             />
@@ -380,7 +314,7 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
               defaultValue={initialUser?.department}
             >
               <option value="">Select Department</option>
-              {departments.map((dept) => (
+              {DEPARTMENTS.map((dept) => (
                 <option key={dept} value={dept}>
                   {dept}
                 </option>

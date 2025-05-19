@@ -1,6 +1,4 @@
 import React from "react";
-import { format } from "date-fns";
-import { eachDayOfInterval } from "date-fns";
 
 interface Column<T> {
   header: string;

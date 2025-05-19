@@ -1,20 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
+import { userApi } from "../../api/apiCalls";
 const ViewTeam = () => {
   const auth = useSelector((state: RootState) => state.auth);
   
-  const getAllUsers = async () => {
-    const response = await axios.get("http://localhost:3001/users");
-    return response.data;
-  };
 
   const { data: usersData } = useQuery({
     queryKey: ["users"],
-    queryFn: getAllUsers,
+    queryFn: userApi.getAll,
     select(data) {
-      return data.filter((user:any) => user.managerId === auth.id);
+      return data.filter((user) => user.managerId === auth.id);
     },
   });
 
@@ -31,7 +27,7 @@ const ViewTeam = () => {
           </tr>
         </thead>
         <tbody className="table-body">
-          {usersData?.length > 0 ? (
+          {usersData && usersData?.length > 0 ? (
             usersData.map((user: any, index: number) => (
               <tr key={user.id}>
                 <td>{index + 1}</td>

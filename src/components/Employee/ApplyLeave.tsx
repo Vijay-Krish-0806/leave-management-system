@@ -5,10 +5,8 @@ import {
   eachDayOfInterval,
   format,
   areIntervalsOverlapping,
-  parseISO,
 } from "date-fns";
 import "react-datepicker/dist/react-datepicker.css";
-import "../css/ApplyLeave.css";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../app/store";
 import axios from "axios";
@@ -17,22 +15,15 @@ import { setUser } from "../../features/auth/authSlice";
 import { toast } from "react-toastify";
 import { LeaveApplication } from "../../types";
 import LeaveHistory from "./LeaveHistory";
-
-const HOLIDAYS = [
-  "2025-01-01",
-  "2025-01-14",
-  "2025-08-15",
-  "2025-08-24",
-  "2025-10-02",
-  "2025-10-24",
-].map((d) => parseISO(d));
+import { HOLIDAYS } from "../../constants";
+import { combinedOperations, leaveApi, userApi } from "../../api/apiCalls";
+import "../css/ApplyLeave.css";
 
 const LeaveManagement: React.FC = () => {
   const auth = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const [managerNames, setManagerNames] = useState<string[]>([]);
-
   // Form state
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([
     null,
@@ -42,10 +33,12 @@ const LeaveManagement: React.FC = () => {
   const [leaves, setLeaves] = useState<
     { startDate: string; endDate: string }[]
   >([]);
+
   const [leaveType, setLeaveType] = useState<string>("");
   const [leaveReason, setLeaveReason] = useState<string>("");
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editLeaveId, setEditLeaveId] = useState<string | null>(null);
+  const [managerId, setManagerId] = useState<string>();
 
   // Validation errors
   const [errors, setErrors] = useState({
@@ -57,32 +50,28 @@ const LeaveManagement: React.FC = () => {
 
   const { data: userLeaves, isLoading } = useQuery({
     queryKey: ["leave-applications"],
-    queryFn: getLeaveApplications,
+    queryFn: () => leaveApi.getByEmployeeId(auth.id),
   });
-  console.log(userLeaves);
 
-  async function getLeaveApplications() {
-    const response = await axios.get(
-      `http://localhost:3001/leaveApplications/?employeeId=${auth.id}`
-    );
-    return response.data as LeaveApplication[];
-  }
-
-  const [managerId, setManagerId] = useState();
+  const { data: user } = useQuery({
+    queryKey: ["users", auth.id],
+    queryFn: () => userApi.getById(auth.id),
+    enabled: !!auth.id,
+  });
 
   useEffect(() => {
     if (!auth.id) {
       return;
     }
-    axios
-      .get(`http://localhost:3001/users/${auth.id}`)
-      .then((res) => setManagerId(res.data.managerId))
-      .catch((e) => console.error("Error fetching user", e));
-  }, []);
+    if (user) {
+      if (user) {
+        setManagerId(user.managerId);
+      }
+    }
+  }, [user]);
 
   useEffect(() => {
     if (!auth) return;
-
     const fetchManagerNames = async () => {
       try {
         const promises = (userLeaves || [])
@@ -90,7 +79,6 @@ const LeaveManagement: React.FC = () => {
           .map((application) =>
             axios.get(`http://localhost:3001/users/${application.approvedBy}`)
           );
-
         const responses = await Promise.all(promises);
         const names = responses.map((res) => res.data.username);
         setManagerNames(names);
@@ -104,21 +92,23 @@ const LeaveManagement: React.FC = () => {
 
   useEffect(() => {
     setLeaves(
-      (userLeaves || []).map(({ startDate, endDate }) => ({
-        startDate,
-        endDate,
-      }))
+      (userLeaves || [])
+        .filter((leave) => leave.status === "approved")
+        .map(({ startDate, endDate }) => ({
+          startDate,
+          endDate,
+        }))
     );
-  }, []);
+  }, [userLeaves]);
 
   const leaveDates: Date[] = leaves.flatMap(({ startDate, endDate }) => {
-    const start = parseISO(startDate);
-    const end = parseISO(endDate);
+    const start = startDate;
+    const end = endDate;
     return eachDayOfInterval({ start, end });
   });
   const highlightWithRanges = [
     { "react-datepicker__day--highlighted-holiday": HOLIDAYS },
-    { "react-datepicker__day--highlighted-leave": leaveDates || [] },
+    { "react-datepicker__day--highlighted-leave": leaveDates },
   ];
 
   const businessDaysCount = useMemo(() => {
@@ -142,12 +132,17 @@ const LeaveManagement: React.FC = () => {
   };
 
   const checkIsLeaveOverlapping = () => {
-    const overlappingLeaves = userLeaves?.filter((leave) =>
-      areIntervalsOverlapping(
-        { start: new Date(leave.startDate), end: new Date(leave.endDate) },
-        { start: new Date(startDate as Date), end: new Date(endDate as Date) },
-        { inclusive: true }
-      )
+    const overlappingLeaves = userLeaves?.filter(
+      (leave) =>
+        (leave.status === "approved" || leave.status === "pending") &&
+        areIntervalsOverlapping(
+          { start: new Date(leave.startDate), end: new Date(leave.endDate) },
+          {
+            start: new Date(startDate as Date),
+            end: new Date(endDate as Date),
+          },
+          { inclusive: true }
+        )
     );
     return overlappingLeaves && overlappingLeaves.length > 0;
   };
@@ -157,7 +152,7 @@ const LeaveManagement: React.FC = () => {
       dateRange: !startDate || !endDate,
       leaveType: !leaveType,
       leaveReason: !leaveReason.trim(),
-      isLeaveOverlapping: checkIsLeaveOverlapping() as boolean,
+      isLeaveOverlapping: !isEditing && (checkIsLeaveOverlapping() as boolean),
     };
     setErrors(newErrors);
     return !Object.values(newErrors).some(Boolean);
@@ -194,19 +189,19 @@ const LeaveManagement: React.FC = () => {
         endDate: endDate!.toISOString(),
         type: leaveType,
         status: "pending",
-        requestedBy: `${auth.username} (${auth.email})`,
+        requestedBy: `${user?.username} (${user?.email})`,
         approvedBy: null,
         currentManager: auth.managerId,
         reason: leaveReason,
         createdAt,
       };
 
-      let updatedLeaveBalance = auth.leaveBalance;
-      let updatedUnpaid = auth.unpaidLeaves;
+      let updatedLeaveBalance = user?.leaveBalance || 20;
+      let updatedUnpaid = user?.unpaidLeaves || 0;
       if (!isEditing) {
         const days = businessDaysCount;
         if (leaveType === "paid") {
-          if (days > auth.leaveBalance) {
+          if (days > (user && user.leaveBalance || 0)) {
             toast.error("Insufficient paid leave balance");
             return;
           }
@@ -221,23 +216,17 @@ const LeaveManagement: React.FC = () => {
             unpaidLeaves: updatedUnpaid,
           })
         );
-        await axios.post(
-          "http://localhost:3001/leaveApplications",
-          leaveApplication
+        await combinedOperations.applyForLeave(
+          leaveApplication,
+          auth.id,
+          updatedLeaveBalance,
+          updatedUnpaid
         );
-        await axios.patch(`http://localhost:3001/users/${auth.id}`, {
-          leaveBalance: updatedLeaveBalance,
-          unpaidLeaves: updatedUnpaid,
-        });
         toast.success("Leave application submitted successfully!");
       } else {
-        await axios.put(
-          `http://localhost:3001/leaveApplications/${editLeaveId}`,
-          leaveApplication
-        );
+        await leaveApi.update(editLeaveId as string, leaveApplication);
         toast.success("Leave application updated successfully!");
       }
-
       await queryClient.invalidateQueries({ queryKey: ["leave-applications"] });
       resetForm();
     } catch (e) {
@@ -269,7 +258,14 @@ const LeaveManagement: React.FC = () => {
               onChange={handleChange}
               isClearable
               placeholderText="Click to select a date range"
-              filterDate={(d) => !isWeekend(d)}
+              filterDate={(date) => {
+                // Filter out weekends
+                if (isWeekend(date)) return false;
+                
+                // Filter out holidays
+                const dateString = format(date, 'yyyy-MM-dd');
+                return !HOLIDAYS.includes(dateString);
+              }}
               className="date-picker-input"
             />
             {errors.dateRange && (
@@ -301,13 +297,13 @@ const LeaveManagement: React.FC = () => {
               <option value="">Select leave type</option>
               <option value="unpaid">Unpaid leaves – infinite days</option>
               <option value="bereavement">Bereavement Leave</option>
-              {auth.gender === "male" ? (
+              {user?.gender === "male" ? (
                 <option value="paternity">Paternity Leave – 5 days</option>
               ) : (
                 <option value="maternity">Maternity Leave – 182 days</option>
               )}
               <option value="paid">
-                Paid leave – {auth.leaveBalance} days available
+                Paid leave – {user?.leaveBalance} days available
               </option>
             </select>
             {errors.leaveType && (

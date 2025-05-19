@@ -2,11 +2,12 @@ import React from "react";
 import { format, eachDayOfInterval, isWeekend, isPast } from "date-fns";
 import { LeaveApplication } from "../../types";
 import { toast } from "react-toastify";
-import axios from "axios";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../app/store";
 import { setUser } from "../../features/auth/authSlice";
+import { combinedOperations } from "../../api/apiCalls";
+import "../css/Table.css"
 
 interface LeaveHistoryProps {
   leaves: LeaveApplication[] | undefined;
@@ -54,48 +55,56 @@ const LeaveHistory: React.FC<LeaveHistoryProps> = ({
     try {
       let updatedLeaveBalance = auth.leaveBalance;
       let updatedUnpaid = auth.unpaidLeaves;
-      if (leave.status === "approved") {
+
+      if (leave.status === "approved" || leave.status === "pending") {
         const allDays = eachDayOfInterval({
           start: new Date(leave.startDate),
           end: new Date(leave.endDate),
         });
         const days = allDays.filter((d) => !isWeekend(d)).length;
-        if (leave.type === "paid") updatedLeaveBalance += days;
-        else updatedUnpaid = Math.max(0, updatedUnpaid - days);
+
+        if (leave.type === "paid") {
+          updatedLeaveBalance += days;
+        } else {
+          updatedUnpaid = Math.max(0, updatedUnpaid - days);
+        }
       }
-      await axios.patch(`http://localhost:3001/leaveApplications/${leave.id}`, {
-        status: "cancelled",
-      });
+
+      const result = await combinedOperations.cancelLeaveAndRestoreBalance(
+        leave.id,
+        auth.id,
+        updatedLeaveBalance,
+        updatedUnpaid
+      );
+
       dispatch(
         setUser({
           ...auth,
-          leaveBalance: updatedLeaveBalance,
-          unpaidLeaves: updatedUnpaid,
+          leaveBalance: result.user.leaveBalance,
+          unpaidLeaves: result.user.unpaidLeaves as number,
         })
       );
-      await axios.patch(`http://localhost:3001/users/${auth.id}`, {
-        leaveBalance: updatedLeaveBalance,
-        unpaidLeaves: updatedUnpaid,
-      });
+
+      // Invalidate queries to refresh data
       await queryClient.invalidateQueries({ queryKey: ["leave-applications"] });
       toast.success("Leave request cancelled successfully!");
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
       toast.error("Failed to cancel leave request. Please try again.");
     }
   };
   const canPerformActions = (leave: LeaveApplication) => {
     if (leave.status === "pending") {
-      return true; 
+      return true;
     } else if (leave.status === "approved") {
       return !isPast(new Date(leave.startDate));
     }
-    return false; 
+    return false;
   };
 
   return (
     <div className="leave-history-section">
-      <h2>Leave History</h2> 
+      <h2>Leave History</h2>
       {isLoading ? (
         <div className="loading">Loading leave history...</div>
       ) : (
@@ -142,11 +151,18 @@ const LeaveHistory: React.FC<LeaveHistoryProps> = ({
                   </td>
                   <td>
                     <div className="approval-info">
-                      <span className="approved-by-label">Approved By</span>
+                      <span className="approved-by-label">
+                        {["pending", "approved", "cancelled"].includes(
+                          leave.status
+                        )
+                          ? "Approved"
+                          : "Rejected"}{" "}
+                        By
+                      </span>
                       <span className="manager-name">
-                        {leave.status === "approved"
-                          ? managerNames[index]
-                          : "Pending"}
+                        {(leave.status === "approved" ||
+                          leave.status === "rejected") &&
+                          managerNames[index]}
                       </span>
                     </div>
                   </td>
