@@ -14,6 +14,31 @@ import {
 import "../css/EmployeeDetails.css";
 import { userApi } from "../../api/apiCalls";
 
+/**
+ * EmployeeDetails component for displaying detailed information about an employee.
+ *
+ * This component fetches and displays user data, including personal information,
+ * role, department, and leave history. It also shows the manager's name and allows
+ * navigation back to the previous page.
+ *
+ *
+ * @returns {JSX.Element} The rendered EmployeeDetails component.
+ *
+ * @example
+ * return <EmployeeDetails />;
+ *
+ * @function getAllLeaves
+ * Fetches all leave applications for the specified employee.
+ * @returns {Promise<LeaveApplication[]>} A promise that resolves to the leave applications.
+ *
+ * @function getManagerName
+ * Fetches the name of the employee's manager based on the manager ID.
+ * @returns {Promise<void>} A promise that resolves when the manager's name is set.
+ *
+ * @function handleNavigate
+ * Handles navigation back to the previous page.
+ */
+
 const EmployeeDetails = () => {
   const { userId } = useParams();
   const navigate = useNavigate();

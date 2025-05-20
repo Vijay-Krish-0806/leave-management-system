@@ -22,7 +22,7 @@
       "managerId": "2183",
       "department": "HR",
       "leaveBalance": 19,
-      "unpaidLeaves": 5
+      "unpaidLeaves": 7
     },
     {
       "id": "c5ba",
@@ -71,6 +71,18 @@
       "leaveBalance": 20,
       "unpaidLeaves": 0,
       "id": "bb3b"
+    },
+    {
+      "id": "85da",
+      "username": "Dummy User",
+      "email": "dummy@pal.tech",
+      "password": "welcome",
+      "role": "employee",
+      "gender": "male",
+      "department": "Data",
+      "managerId": "",
+      "leaveBalance": 20,
+      "unpaidLeaves": 0
     }
   ],
   "leaveApplications": [
@@ -177,6 +189,32 @@
       "currentManager": "c5ba",
       "reason": "Sick",
       "createdAt": "2025-05-19T19:27:57.375Z"
+    },
+    {
+      "id": "1747714701808",
+      "employeeId": "2184",
+      "startDate": "2025-08-11T18:30:00.000Z",
+      "endDate": "2025-08-11T18:30:00.000Z",
+      "type": "unpaid",
+      "status": "pending",
+      "requestedBy": "Dharani (dharani@pal.tech)",
+      "approvedBy": null,
+      "currentManager": "2183",
+      "reason": "Sick",
+      "createdAt": "2025-05-20T04:18:21.808Z"
+    },
+    {
+      "id": "1747714996186",
+      "employeeId": "2184",
+      "startDate": "2025-10-15T18:30:00.000Z",
+      "endDate": "2025-10-15T18:30:00.000Z",
+      "type": "unpaid",
+      "status": "pending",
+      "requestedBy": "Dharani (dharani@pal.tech)",
+      "approvedBy": null,
+      "currentManager": "2183",
+      "reason": "Sick",
+      "createdAt": "2025-05-20T04:23:16.186Z"
     }
   ]
 }

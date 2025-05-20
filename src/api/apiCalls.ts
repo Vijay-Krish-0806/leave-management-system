@@ -223,7 +223,6 @@ export const leaveApi = {
       );
 
       await Promise.all(updatePromises);
-     
     } catch (error) {
       console.error("Error updating leave applications manager:", error);
       throw error;

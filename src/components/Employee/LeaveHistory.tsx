@@ -9,6 +9,35 @@ import { setUser } from "../../features/auth/authSlice";
 import { combinedOperations } from "../../api/apiCalls";
 import "../css/Table.css";
 
+/**
+ * LeaveHistory component for displaying a user's leave applications.
+ *
+ * This component shows a table of leave applications with options to filter by leave type and status.
+ * It allows users to edit or cancel their leave requests based on their current status.
+ *
+ * @param {LeaveHistoryProps} props - The props for the LeaveHistory component.
+ * @param {LeaveApplication[] | undefined} props.leaves - The list of leave applications.
+ * @param {boolean} props.isLoading - Indicates if the leave data is currently loading.
+ * @param {string[]} props.managerNames - List of manager names corresponding to the leave applications.
+ * @param {(leave: LeaveApplication) => void} props.onEditLeave - Callback function to handle editing a leave application.
+ *
+ * @returns {JSX.Element} The rendered LeaveHistory component.
+ *
+ * @typedef {Object} LeaveHistoryProps
+ * @property {LeaveApplication[] | undefined} leaves - The leave applications to display.
+ * @property {boolean} isLoading - Indicates if the leave history is loading.
+ * @property {string[]} managerNames - Names of managers who approved the leave applications.
+ * @property {(leave: LeaveApplication) => void} onEditLeave - Function to call when editing a leave application.
+ *
+ * @function handleCancelLeave
+ * @param {LeaveApplication} leave - The leave application to cancel.
+ * Handles the logic for canceling a leave application and restoring leave balance.
+ *
+ * @function canPerformActions
+ * @param {LeaveApplication} leave - The leave application to check.
+ * @returns {boolean} True if actions can be performed on the leave, false otherwise.
+ */
+
 interface LeaveHistoryProps {
   leaves: LeaveApplication[] | undefined;
   isLoading: boolean;

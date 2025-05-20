@@ -2,6 +2,19 @@ import React from "react";
 import CommonTabs from "../CommonTabs";
 import { NavLink } from "react-router-dom";
 
+/**
+ * ManagerTabs component for rendering manager-specific navigation tabs.
+ *
+ * This component provides navigation links for manager functionalities, including
+ * view the team, viewing active team leaves, and showing all leave applications of the team.
+ *
+ *
+ * @returns {JSX.Element} The rendered ManagerTabs component.
+ *
+ * @example
+ * return <ManagerTabs />;
+ */
+
 const ManagerTabs: React.FC = () => {
   const managerSpecificTabs = (
     <>

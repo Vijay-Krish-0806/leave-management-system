@@ -7,6 +7,29 @@ import { RootState } from "../../app/store";
 import { useQuery } from "@tanstack/react-query";
 import { userApi } from "../../api/apiCalls";
 
+/**
+ * LeaveBalanceChart component for displaying the user's leave balance using a donut chart.
+ *
+ * This component fetches the user's leave data and visualizes the consumed and available leave balances
+ * for paid and unpaid leaves. It uses the AgCharts library to render the chart.
+ *
+ *
+ * @returns {JSX.Element} The rendered LeaveBalanceChart component.
+ *
+ * @typedef {Object} LeaveData
+ * @property {string} type - The type of leave (e.g., "Paid Leaves", "Unpaid Leaves").
+ * @property {number} consumed - The amount of leave consumed.
+ * @property {number | string} available - The amount of leave available (can be a number or "∞" for unpaid leaves).
+ * @property {number | string} total - The total amount of leave (can be a number or "∞" for unpaid leaves).
+ *
+ * @function handleFetchUser Data
+ * Fetches user data from the API to retrieve leave balance information.
+ *
+ * @function getChartOptions
+ * Generates the chart options for the AgCharts donut chart.
+ * @returns {AgChartOptions} The options for the chart.
+ */
+
 interface LeaveData {
   type: string;
   consumed: number;
@@ -67,7 +90,7 @@ const LeaveBalanceChart: React.FC = () => {
   const chartOptions: AgChartOptions = {
     data: chartData,
     title: {
-      text: "Leave Balance",
+      text: "My Leave Balance",
       fontSize: 18,
       fontWeight: "bold",
     },

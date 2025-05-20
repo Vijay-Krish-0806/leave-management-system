@@ -17,14 +17,42 @@ import DropDownWithSearch from "../DropDownWithSearch";
 import { userApi, leaveApi } from "../../api/apiCalls"; // Import API functions
 import { DEPARTMENTS, LEAVE_BALANCE } from "../../constants";
 
+/**
+ * CreateEditEmployee component for creating or editing employee details.
+ *
+ * This component provides a form for entering employee information, including
+ * personal details, role, department, and manager assignment. It supports both
+ * creating a new employee and editing an existing employee's information.
+ *
+ * @param {EmployeeFormProps} props - The props for the CreateEditEmployee component.
+ * @param {boolean} [props.isEditMode=false] - Indicates if the component is in edit mode.
+ * @param {User } [props.initialUser ] - The initial user data for editing an existing employee.
+ * @param {() => void} [props.onClose] - Callback function to close the modal.
+ * @param {boolean} props.isModalOpen - Indicates if the modal is open.
+ *
+ * @returns {JSX.Element} The rendered CreateEditEmployee component.
+ *
+ * @typedef {Object} EmployeeFormProps
+ * @property {boolean} [isEditMode] - Flag to indicate if the form is for editing an employee.
+ * @property {User } [initialUser ] - The initial user data for the employee being edited.
+ * @property {() => void} [onClose] - Function to call when closing the modal.
+ * @property {boolean} isModalOpen - Flag to indicate if the modal is currently open.
+ *
+ * @function handleSubmit
+ * Handles the form submission for creating or updating an employee.
+ * @param {React.FormEvent<HTMLFormElement>} event - The form submission event.
+ *
+ * @function handleClose
+ * Handles closing the modal when the overlay is clicked.
+ * @param {React.MouseEvent<HTMLDivElement>} e - The click event on the modal overlay.
+ */
+
 interface EmployeeFormProps {
   isEditMode?: boolean;
   initialUser?: User;
   onClose?: () => void;
   isModalOpen: boolean;
 }
-
-
 
 const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
   isEditMode = false,
@@ -150,7 +178,6 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
           userData.managerId !== initialUser.managerId &&
           userData.id
         ) {
-          
           await updateMutation.mutateAsync(userData);
 
           await updateManagerMutation.mutateAsync({
@@ -187,7 +214,7 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
         )}
       </div>
 
-      <form onSubmit={handleSubmit} className="employee-form">
+      <form onSubmit={handleSubmit} className="employee-form" id="create-user-form">
         <div className="form-row">
           {!isEditMode ? (
             <>
@@ -290,9 +317,9 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
               <span>Assigned to</span>
             </label>
             <DropDownWithSearch
-              usersList={usersList?.filter(
-                (user: User) => user.role === "manager"
-              ) || []}
+              usersList={
+                usersList?.filter((user: User) => user.role === "manager") || []
+              }
               //@ts-ignore
               initialUser={initialUser}
               placeholder="Select Manager"

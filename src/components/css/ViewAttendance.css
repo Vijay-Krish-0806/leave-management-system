@@ -72,11 +72,11 @@
 }
 
 .color-paid {
-  background-color: #4CAF50;
+  background-color: #4caf50;
 }
 
 .color-unpaid {
-  background-color: #2196F3;
+  background-color: #2196f3;
 }
 
 .leave-value {
@@ -87,7 +87,7 @@
 
 .leave-value-infinity {
   font-size: clamp(20px, 2vw, 24px);
-  color: #FFC107;
+  color: #ffc107;
 }
 
 @media (max-width: 992px) {
@@ -100,8 +100,8 @@
   .chart-and-stats-container {
     flex-direction: column;
   }
-  
-  .chart-container, 
+
+  .chart-container,
   .leave-stats {
     flex: 1 1 100%;
     width: 100%;
@@ -113,24 +113,24 @@
   .leave-container {
     padding: 10px;
   }
-  
+
   .card-base {
     padding: 15px;
   }
-  
+
   .leave-card-title {
     font-size: 16px;
     margin-bottom: 10px;
   }
-  
+
   .leave-label {
     font-size: 13px;
   }
-  
+
   .leave-value {
     font-size: 16px;
   }
-  
+
   .leave-value-infinity {
     font-size: 20px;
   }

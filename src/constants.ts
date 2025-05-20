@@ -1,5 +1,3 @@
-
-
 export const HOLIDAYS = [
   "2025-01-01",
   "2025-01-14",
@@ -7,7 +5,7 @@ export const HOLIDAYS = [
   "2025-08-24",
   "2025-10-02",
   "2025-10-24",
-]
+];
 
 export const DEPARTMENTS = [
   "CEO",
@@ -20,12 +18,8 @@ export const DEPARTMENTS = [
   "Java",
 ];
 
-export const ROLES=[
-  "employee",
-  "manager",
-  "HR"
-]
+export const ROLES = ["employee", "manager", "HR"];
 
 export const LEAVE_BALANCE = 20;
 
-export const DEFAULT_MANAGER_ID="2183"
+export const DEFAULT_MANAGER_ID = "2183";

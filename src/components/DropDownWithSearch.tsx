@@ -1,11 +1,35 @@
 import { useEffect, useRef, useState } from "react";
 import { FaChevronDown, FaSearch } from "react-icons/fa";
 import { FaChevronUp, FaX } from "react-icons/fa6";
-import "./css/DropDownSearch.css"
+import "./css/DropDownSearch.css";
 import { User } from "../types";
-type UserProps = User;
 
-type Props = {
+/**
+ * DropDownWithSearch component for selecting a user from a searchable dropdown list.
+ *
+ * This component allows users to search for and select a manager from a list of users.
+ * It displays the selected user's name and provides a search input to filter the options.
+ *
+ * @param {Object} props - The component props.
+ * @param {User []} props.usersList - The list of users to display in the dropdown.
+ * @param {User  | null} props.initialUser  - The initially selected user, if any.
+ * @param {string} [props.placeholder="Select Managers"] - The placeholder text for the search input.
+ * @param {boolean} props.required - Indicates if the selection is required.
+ * @returns {JSX.Element} The rendered DropDownWithSearch component.
+ *
+ * @example
+ * return (
+ *   <DropDownWithSearch
+ *     usersList={userList}
+ *     initialUser ={initialUser }
+ *     placeholder="Select a manager"
+ *     required={true}
+ *   />
+ * );
+ */
+
+type UserProps = User;
+interface Props  {
   usersList: UserProps[];
   initialUser: UserProps | null;
   placeholder: string;
@@ -106,8 +130,13 @@ const DropDownWithSearch: React.FC<Props> = ({
       <input
         type="hidden"
         name="assigned"
-        value={(initialUser ? initialUser.managerId: selectedOption?selectedOption.id:"") }
-
+        value={
+          initialUser
+            ? initialUser.managerId
+            : selectedOption
+            ? selectedOption.id
+            : ""
+        }
         required={required}
       />
     </div>

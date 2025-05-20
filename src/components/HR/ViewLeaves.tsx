@@ -4,13 +4,27 @@ import { FaSpinner } from "react-icons/fa";
 import { format } from "date-fns";
 import "../css/Table.css";
 import { leaveApi } from "../../api/apiCalls";
+/**
+ * ViewLeaves component for displaying a list of leave applications.
+ *
+ * This component fetches leave application data and allows users to search
+ * by username and filter by leave status. It displays the leave applications
+ * in a table format.
+ *
+ *
+ * @returns {JSX.Element} The rendered ViewLeaves component.
+ *
+ * @example
+ * return <ViewLeaves />;
+ *
+ * @function filteredLeaves
+ * Filters the leave applications based on the search term and selected status.
+ * @returns {LeaveApplication[]} The filtered list of leave applications.
+ */
 
 const ViewLeaves: React.FC = () => {
-  // 1. All useState Hooks must come first
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filterStatus, setFilterStatus] = useState<string>("All");
-
-  // 2. Then other Hooks like useQuery
   const {
     isLoading,
     isError,
@@ -21,7 +35,6 @@ const ViewLeaves: React.FC = () => {
     queryFn: leaveApi.getAll,
   });
 
-  // 3. Then useMemo - BEFORE any conditional returns
   const filteredLeaves = useMemo(() => {
     if (!leaves) return [];
     return leaves.filter((leave) => {
@@ -34,7 +47,6 @@ const ViewLeaves: React.FC = () => {
     });
   }, [leaves, searchTerm, filterStatus]);
 
-  // 4. Only after all Hooks are called can we do conditional returns
   if (isLoading) {
     return (
       <div className="loading">
@@ -112,3 +124,88 @@ const ViewLeaves: React.FC = () => {
 };
 
 export default ViewLeaves;
+
+
+// import React, { useMemo, useState } from "react";
+// import { useQuery } from "@tanstack/react-query";
+// import { format } from "date-fns";
+// import Table from "../CommonTable"; // Adjust the import path as necessary
+// import { leaveApi } from "../../api/apiCalls";
+
+// const ViewLeaves: React.FC = () => {
+//   const [searchTerm, setSearchTerm] = useState<string>("");
+//   const [filterStatus, setFilterStatus] = useState<string>("All");
+//   const {
+//     isLoading,
+//     isError,
+//     data: leaves,
+//     error,
+//   } = useQuery({
+//     queryKey: ["leave-applications"],
+//     queryFn: leaveApi.getAll,
+//   });
+
+//   const filteredLeaves = useMemo(() => {
+//     if (!leaves) return [];
+//     return leaves.filter((leave) => {
+//       const matchesUser = leave.requestedBy
+//         .toLowerCase()
+//         .includes(searchTerm.toLowerCase());
+//       const matchesStatus =
+//         filterStatus === "All" || leave.status === filterStatus;
+//       return matchesUser && matchesStatus;
+//     });
+//   }, [leaves, searchTerm, filterStatus]);
+
+//   const columns = [
+//     { header: "User", accessor: "requestedBy" },
+//     {
+//       header: "Leave Dates",
+//       accessor: (leave: any) =>
+//         `${format(new Date(leave.startDate), "PPP")} - ${format(
+//           new Date(leave.endDate),
+//           "PPP"
+//         )}`,
+//     },
+//     { header: "Status", accessor: "status" },
+//     { header: "Reason", accessor: "reason" },
+//   ];
+
+//   return (
+//     <>
+//       <div className="table-controls">
+//         <div>
+//           <input
+//             type="text"
+//             placeholder="Search by username"
+//             value={searchTerm}
+//             onChange={(e) => setSearchTerm(e.target.value)}
+//           />
+//         </div>
+//         <div>
+//           <select
+//             value={filterStatus}
+//             onChange={(e) => setFilterStatus(e.target.value)}
+//           >
+//             <option value="All">Status</option>
+//             <option value="approved">Approved</option>
+//             <option value="pending">Pending</option>
+//             <option value="cancelled">Cancelled</option>
+//             <option value="rejected">Rejected</option>
+//           </select>
+//         </div>
+//       </div>
+//       <Table
+//         columns={columns}
+//         data={filteredLeaves}
+//         caption="Leave Applications"
+//         isLoading={isLoading}
+//         isError={isError}
+//         errorMessage={`Error loading leaves: ${error?.message}`}
+//       />
+//     </>
+//   );
+// };
+
+// export default ViewLeaves;
+

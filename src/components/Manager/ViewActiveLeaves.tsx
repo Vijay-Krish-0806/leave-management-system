@@ -52,8 +52,6 @@ const ViewActiveLeaves: React.FC = () => {
       console.error("User update error:", error);
     },
   });
-
-  // Handle approve leave action
   const handleApprove = (leave: LeaveApplication) => {
     approveRejectMutation.mutate(
       { ...leave, status: "approved", approvedBy: auth.id },
@@ -99,8 +97,6 @@ const ViewActiveLeaves: React.FC = () => {
       toast.error("Failed to complete the rejection process");
     }
   };
-
-  // Loading state
   if (isLoading) {
     return (
       <div className="loading-spinner">
@@ -110,7 +106,6 @@ const ViewActiveLeaves: React.FC = () => {
     );
   }
 
-  // Error state
   if (isError) {
     return (
       <div className="error-message">
@@ -119,8 +114,6 @@ const ViewActiveLeaves: React.FC = () => {
       </div>
     );
   }
-
-  // Render the leave requests table
   return (
     <div className="table-container">
       <table className="custom-table">

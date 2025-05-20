@@ -12,6 +12,21 @@ import {
 import React from "react";
 import NotFoundPage from "./components/NotFoundPage";
 
+/**
+ * App component for the main application routing.
+ *
+ * This component sets up the routing for the application using React Router.
+ * It includes public routes, protected dashboard routes based on user roles,
+ * and a 404 Not Found page for unmatched routes. It also integrates a toast
+ * notification container for displaying messages.
+ *
+ * 
+ * @returns {JSX.Element} The rendered App component.
+ *
+ * @example
+ * return <App />;
+ */
+
 const App: React.FC = () => {
   return (
     <BrowserRouter>

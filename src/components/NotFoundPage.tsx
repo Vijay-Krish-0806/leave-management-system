@@ -2,6 +2,19 @@ import React from "react";
 import "./css/404Page.css";
 import { Link } from "react-router-dom";
 
+/**
+ * NotFoundPage component for displaying a 404 error page.
+ *
+ * This component informs the user that the requested page does not exist
+ * and provides a link to navigate back to the home page.
+ *
+ *
+ * @returns {JSX.Element} The rendered NotFoundPage component.
+ *
+ * @example
+ * return <NotFoundPage />;
+ */
+
 const NotFoundPage: React.FC = () => {
   return (
     <div className="not-found-container">

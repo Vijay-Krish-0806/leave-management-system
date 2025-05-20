@@ -9,6 +9,19 @@ import { userApi } from "../api/apiCalls";
 import "./css/LoginPage.css";
 import { FaCircleArrowRight } from "react-icons/fa6";
 
+/**
+ * LoginPage component for user authentication in the Leave Management System.
+ * This component allows users to log in by entering their email and password.
+ * It handles user authentication, displays error messages, and navigates to the dashboard upon successful login.
+ *
+ *
+ * @returns {JSX.Element} The rendered LoginPage component.
+ *
+ * @example
+ * // Usage
+ * <LoginPage />
+ */
+
 const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [userEmail, setUserEmail] = useState("");
@@ -66,7 +79,11 @@ const LoginPage: React.FC = () => {
       <div className="right-side">
         <div className="form-wrapper">
           <h1>Login to Leave Management System</h1>
-          <form onSubmit={handleSubmit} className="form-container">
+          <form
+            onSubmit={handleSubmit}
+            className="form-container"
+            id="login-form"
+          >
             {error && <div className="error-msg">{error}</div>}
 
             <div className="input-container">
@@ -102,7 +119,7 @@ const LoginPage: React.FC = () => {
             </div>
 
             <button type="submit" className="submit-btn">
-              <FaCircleArrowRight/>
+              <FaCircleArrowRight />
               Login
             </button>
           </form>

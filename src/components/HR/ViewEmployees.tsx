@@ -16,6 +16,47 @@ import api from "../../api/apiCalls";
 import { DEFAULT_MANAGER_ID, DEPARTMENTS, ROLES } from "../../constants";
 import "../css/Table.css";
 
+/**
+ * ViewEmployees component for displaying and managing a list of employees.
+ *
+ * This component fetches employee data, allows searching, filtering, sorting,
+ * and provides options to add, edit, or delete employees. It also displays
+ * a modal for creating or editing employee details.
+ *
+ *
+ * @returns {JSX.Element} The rendered ViewEmployees component.
+ *
+ * @example
+ * return <ViewEmployees />;
+ *
+ * @function deleteUser
+ * Deletes a user based on the provided user ID.
+ * @param {string} id - The ID of the user to delete.
+ * @returns {Promise<{ success: boolean }>} A promise that resolves when the user is deleted.
+ *
+ * @function handleEdit
+ * Opens the modal for editing the selected user.
+ * @param {User } user - The user object to edit.
+ *
+ * @function handleSort
+ * Sorts the user list based on the specified key.
+ * @param {keyof User} key - The key to sort by.
+ *
+ * @function handleDelete
+ * Confirms and deletes the selected user.
+ * @param {string} id - The ID of the user to delete.
+ *
+ * @function handleUser Details
+ * Navigates to the user details page for the selected user.
+ * @param {string} userId - The ID of the user to view details for.
+ *
+ * @function handleAddEmployee
+ * Opens the modal for adding a new employee.
+ *
+ * @function handleCloseModal
+ * Closes the modal for creating or editing an employee.
+ */
+
 type SortConfig = {
   key: keyof User;
   direction: "asc" | "desc";

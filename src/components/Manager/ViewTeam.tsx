@@ -2,10 +2,17 @@ import { useQuery } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { userApi } from "../../api/apiCalls";
+
+/**
+ * View Team component for displaying all the team members of the particular manager
+ * This component fetches leave application data and filters through managerId
+ * Shows the data in tabluar format
+ *
+ * @returns {JSX.Element} The rendered ViewTeam Component
+ */
+
 const ViewTeam = () => {
   const auth = useSelector((state: RootState) => state.auth);
-  
-
   const { data: usersData } = useQuery({
     queryKey: ["users"],
     queryFn: userApi.getAll,
@@ -48,3 +55,37 @@ const ViewTeam = () => {
 };
 
 export default ViewTeam;
+
+
+
+// import { useQuery } from "@tanstack/react-query";
+// import { useSelector } from "react-redux";
+// import { RootState } from "../../app/store";
+// import { userApi } from "../../api/apiCalls";
+// import Table from "../CommonTable"; // Adjust the import path as necessary
+
+// const ViewTeam = () => {
+//   const auth = useSelector((state: RootState) => state.auth);
+//   const { data: usersData } = useQuery({
+//     queryKey: ["users"],
+//     queryFn: userApi.getAll,
+//     select: (data) =>
+//       data.filter((user) => user.managerId === auth.id),
+//   });
+
+//   const columns = [
+//     { header: "Username", accessor: "username" },
+//     { header: "Email", accessor: "email" },
+//     { header: "Department", accessor: "department" },
+//   ];
+
+//   return (
+//     <Table
+//       columns={columns}
+//       data={usersData || []}
+//       caption="Team Members"
+//     />
+//   );
+// };
+
+// export default ViewTeam;

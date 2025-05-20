@@ -5,6 +5,7 @@
   background-color: #f5f7fa;
   border-bottom: 2px solid #ddd;
   font-family: "Segoe UI", Arial, sans-serif;
+  
 }
 
 /* Base tab style */
@@ -16,6 +17,9 @@
   text-decoration: none;
   border-bottom: 3px solid transparent;
   transition: color 0.3s ease, border-bottom 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap:5px;
 }
 
 .tab:hover {
@@ -27,7 +31,7 @@
   color: #0146a7;
   border-bottom: 3px solid #e3a004;
   background-color: #ffffff;
-  box-shadow: 2px 0 2px rgb(0,0,0,0.5);
+  box-shadow: 2px 0 2px rgb(0, 0, 0, 0.5);
   border-radius: 5px;
 }
 

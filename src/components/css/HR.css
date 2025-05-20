@@ -4,12 +4,11 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   max-width: 800px;
   width: 100%;
-  margin: 20px auto;
+  margin: 15px auto;
   overflow-y: scroll;
   transition: all 0.3s ease;
   position: relative;
   scrollbar-width: none;
-
 }
 */
 .modal-overlay .employee-form-container {
@@ -198,7 +197,6 @@ select {
 .submit-button:hover:not(:disabled) {
   background: linear-gradient(135deg, #4338ca, #4f46e5);
   box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
-  transform: translateY(-2px);
 }
 
 .submit-button:disabled {
