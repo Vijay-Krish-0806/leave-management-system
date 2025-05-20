@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import "./css/Tabs.css";
-import { FaChartPie, FaPiedPiper } from "react-icons/fa6";
+import { FaChartPie } from "react-icons/fa6";
 import { FaSignOutAlt } from "react-icons/fa";
 
 /**
