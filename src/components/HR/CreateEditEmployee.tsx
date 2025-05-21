@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FaPlus,
   FaSave,
@@ -56,8 +56,9 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
   const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  //to get role for dynamic filtering
-  const roleRef = useRef<HTMLSelectElement | null>(null);
+  const [selectedRole, setSelectedRole] = useState(initialUser?.role || "");
+
+  
 
   useEffect(() => {
     document.title = "Create Employee";
@@ -82,7 +83,7 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
     },
   });
 
-//to update the user
+  //to update the user
   const updateMutation = useMutation({
     mutationFn: (userData: User) =>
       userApi.update(userData.id as string, userData),
@@ -97,7 +98,7 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
     },
   });
 
-  //when manager is updated 
+  //when manager is updated
   const updateManagerMutation = useMutation({
     mutationFn: ({
       employeeId,
@@ -140,6 +141,7 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
       const role = formData.get("role") as string;
       const gender = formData.get("gender") as string;
       const managerId = formData.get("assigned") as string;
+      console.log(managerId);
       const department = formData.get("department") as string;
 
       const password = isEditMode
@@ -306,7 +308,7 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
               id="role"
               defaultValue={initialUser?.role || ""}
               required
-              ref={roleRef}
+              onChange={(e) => setSelectedRole(e.target.value)}
             >
               <option value="">Select Role</option>
               <option value="employee">Employee</option>
@@ -321,11 +323,11 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
             </label>
             <DropDownWithSearch
               usersList={
-                roleRef.current && roleRef.current.value === "manager"
-                  ? usersList?.filter(
+                selectedRole === "HR"
+                  ? usersList?.filter((user: User) => user.role === "HR") || []
+                  : usersList?.filter(
                       (user: User) => user.role === "manager"
                     ) || []
-                  : usersList?.filter((user: User) => user.role === "HR") || []
               }
               //@ts-ignore
               initialUser={initialUser}

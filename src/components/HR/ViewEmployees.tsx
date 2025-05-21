@@ -235,7 +235,7 @@ const ViewEmployees: React.FC = () => {
             value={filterRole}
             onChange={(e) => setFilterRole(e.target.value)}
           >
-            <option>Role</option>
+            <option value="All">Role</option>
             {ROLES.map((r) => (
               <option key={r} value={r}>
                 {r}
@@ -248,7 +248,7 @@ const ViewEmployees: React.FC = () => {
             value={filterDept}
             onChange={(e) => setFilterDept(e.target.value)}
           >
-            <option>Departments</option>
+            <option value="All">Departments</option>
             {DEPARTMENTS.map((d) => (
               <option key={d} value={d}>
                 {d}

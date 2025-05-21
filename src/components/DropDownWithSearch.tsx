@@ -29,12 +29,12 @@ import { User } from "../types";
  */
 
 type UserProps = User;
-interface Props  {
+interface Props {
   usersList: UserProps[];
   initialUser: UserProps | null;
   placeholder: string;
   required: boolean;
-};
+}
 
 const DropDownWithSearch: React.FC<Props> = ({
   usersList,
@@ -130,13 +130,7 @@ const DropDownWithSearch: React.FC<Props> = ({
       <input
         type="hidden"
         name="assigned"
-        value={
-          initialUser
-            ? initialUser.managerId
-            : selectedOption
-            ? selectedOption.id
-            : ""
-        }
+        value={selectedOption ? selectedOption.id : initialUser?.managerId}
         required={required}
       />
     </div>

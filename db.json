@@ -37,18 +37,6 @@
       "unpaidLeaves": 7
     },
     {
-      "id": "c5ba",
-      "username": "Sreekar Sudireddy",
-      "email": "sreekar@pal.tech",
-      "password": "welcome",
-      "role": "manager",
-      "gender": "male",
-      "department": "Project Management",
-      "managerId": "2183",
-      "leaveBalance": 20,
-      "unpaidLeaves": 4
-    },
-    {
       "id": "2155",
       "username": "Vinay Chintapally",
       "email": "vinay@pal.tech",
@@ -67,9 +55,9 @@
       "role": "employee",
       "gender": "male",
       "department": "Python",
-      "managerId": "c5ba",
-      "leaveBalance": 19,
-      "unpaidLeaves": 3,
+      "managerId": "7ad6",
+      "leaveBalance": 20,
+      "unpaidLeaves": 0,
       "id": "d9a9"
     },
     {
@@ -107,6 +95,18 @@
       "managerId": "2184",
       "leaveBalance": 20,
       "unpaidLeaves": 0
+    },
+    {
+      "username": "Sreekar Sudireddy",
+      "email": "sreekar@pal.tech",
+      "password": "welcome",
+      "role": "manager",
+      "gender": "male",
+      "department": "Project Management",
+      "managerId": "2183",
+      "leaveBalance": 20,
+      "unpaidLeaves": 0,
+      "id": "7ad6"
     }
   ],
   "leaveApplications": [
@@ -116,10 +116,10 @@
       "startDate": "2025-05-20T18:30:00.000Z",
       "endDate": "2025-05-20T18:30:00.000Z",
       "type": "unpaid",
-      "status": "pending",
+      "status": "approved",
       "requestedBy": "Vijay Inampudi (vijay@pal.tech)",
-      "approvedBy": null,
-      "currentManager": "c5ba",
+      "approvedBy": "2183",
+      "currentManager": "7ad6",
       "reason": "Sick",
       "createdAt": "2025-05-21T04:49:25.539Z"
     },
@@ -129,10 +129,10 @@
       "startDate": "2025-05-27T18:30:00.000Z",
       "endDate": "2025-05-27T18:30:00.000Z",
       "type": "unpaid",
-      "status": "pending",
+      "status": "approved",
       "requestedBy": "Vijay Inampudi (vijay@pal.tech)",
-      "approvedBy": null,
-      "currentManager": "c5ba",
+      "approvedBy": "2183",
+      "currentManager": "7ad6",
       "reason": "Sick",
       "createdAt": "2025-05-21T04:49:37.223Z"
     },
@@ -142,12 +142,38 @@
       "startDate": "2025-05-28T18:30:00.000Z",
       "endDate": "2025-05-28T18:30:00.000Z",
       "type": "unpaid",
-      "status": "pending",
+      "status": "rejected",
       "requestedBy": "Vijay Inampudi (vijay@pal.tech)",
-      "approvedBy": null,
-      "currentManager": "c5ba",
+      "approvedBy": "2183",
+      "currentManager": "7ad6",
       "reason": "Sick",
       "createdAt": "2025-05-21T04:59:24.684Z"
+    },
+    {
+      "id": "1747824373974",
+      "employeeId": "d9a9",
+      "startDate": "2025-08-12T18:30:00.000Z",
+      "endDate": "2025-08-12T18:30:00.000Z",
+      "type": "unpaid",
+      "status": "approved",
+      "requestedBy": "Vijay Inampudi (vijay@pal.tech)",
+      "approvedBy": "7ad6",
+      "currentManager": "7ad6",
+      "reason": "Sick",
+      "createdAt": "2025-05-21T10:46:13.974Z"
+    },
+    {
+      "id": "1747834918524",
+      "employeeId": "d9a9",
+      "startDate": "2025-08-26T18:30:00.000Z",
+      "endDate": "2025-08-26T18:30:00.000Z",
+      "type": "unpaid",
+      "status": "rejected",
+      "requestedBy": "Vijay Inampudi (vijay@pal.tech)",
+      "approvedBy": "7ad6",
+      "currentManager": "7ad6",
+      "reason": "sick",
+      "createdAt": "2025-05-21T13:41:58.524Z"
     }
   ]
 }

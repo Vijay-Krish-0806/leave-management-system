@@ -1,6 +1,7 @@
 import React from "react";
 import CommonTabs from "../CommonTabs";
 import { NavLink } from "react-router-dom";
+import { FaUserCheck, FaUsers, FaUsersViewfinder } from "react-icons/fa6";
 
 /**
  * ManagerTabs component for rendering manager-specific navigation tabs.
@@ -14,7 +15,6 @@ import { NavLink } from "react-router-dom";
  * @example
  * return <ManagerTabs />;
  */
-
 const ManagerTabs: React.FC = () => {
   const managerSpecificTabs = (
     <>
@@ -22,18 +22,21 @@ const ManagerTabs: React.FC = () => {
         to="view-team"
         className={({ isActive }) => `tab ${isActive ? "active" : ""}`}
       >
+        <FaUsers />
         View Team
       </NavLink>
       <NavLink
         to="view-active-team-leaves"
         className={({ isActive }) => `tab ${isActive ? "active" : ""}`}
       >
+        <FaUserCheck />
         View Active Leaves
       </NavLink>
       <NavLink
         to="view-all-team-leaves"
         className={({ isActive }) => `tab ${isActive ? "active" : ""}`}
       >
+        <FaUsersViewfinder />
         Team Leave History
       </NavLink>
     </>

@@ -1,11 +1,11 @@
 .table-container {
   background: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   padding: 30px;
   margin: 0 auto 36px auto;
   overflow-x: auto;
-  max-width: 100%;
+  max-width: 90%;
   position: relative;
 }
 
@@ -52,13 +52,12 @@
 }
 
 .custom-table tbody tr:nth-child(even) {
-  background: #fafcff;
+  background: #ebf3ff;
 }
 
 .custom-table tbody tr:hover {
   background: #e8f4fe;
   transition: background 0.2s ease;
-  scale:1.01;
 }
 
 .custom-table tr:last-child td {
@@ -152,7 +151,6 @@
 .user-edit-button:focus {
   background: #ef6c00;  
   color: #fff;
-  transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(239, 108, 0, 0.2);
 }
 
@@ -160,7 +158,6 @@
 .user-details-button:focus {
   background: #2e7d32; 
   color: #fff;
-  transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(46, 125, 50, 0.2);
 }
 
@@ -174,7 +171,6 @@
 .user-delete-button:focus {
   background: #b71c1c;
   color: #fff;
-  transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(183, 28, 28, 0.2);
 }
 

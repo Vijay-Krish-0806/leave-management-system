@@ -24,10 +24,10 @@ interface LayoutProps {
 
 const DashBoardLayout: React.FC<LayoutProps> = () => {
   return (
-    <main>
+    <div>
       <Navbar />
       <Outlet />
-    </main>
+    </div>
   );
 };
 
