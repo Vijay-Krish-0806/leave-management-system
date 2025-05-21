@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   FaSpinner,
@@ -65,6 +65,7 @@ const ViewEmployees: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<Partial<User>>();
   const [isEditMode, setIsEditMode] = useState(false);
+  const queryClient = useQueryClient();
 
   const {
     isLoading,
@@ -77,7 +78,7 @@ const ViewEmployees: React.FC = () => {
   });
   const countOfHRs = users?.filter((user) => user.role === "HR");
   const defaultManager = users?.find((user) => user.id === DEFAULT_MANAGER_ID);
-
+  //cannot delete if there is only one HR or default manager
   const deleteUser = async (id: string) => {
     if (
       (countOfHRs &&
@@ -100,8 +101,6 @@ const ViewEmployees: React.FC = () => {
       throw error;
     }
   };
-
-  const queryClient = useQueryClient();
 
   const deleteMutation = useMutation({
     mutationFn: deleteUser,
@@ -128,6 +127,10 @@ const ViewEmployees: React.FC = () => {
     key: "username",
     direction: "asc",
   });
+
+  useEffect(() => {
+    document.title = "View Employees";
+  }, []);
 
   const filteredUsers = useMemo(() => {
     if (!users) return [];

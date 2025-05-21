@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { FaCheck, FaSpinner } from "react-icons/fa";
@@ -30,6 +30,10 @@ const ViewActiveLeaves: React.FC = () => {
     },
   });
 
+  useEffect(() => {
+    document.title = "Active Leaves";
+  }, []);
+
   const approveRejectMutation = useMutation({
     mutationFn: (leave: LeaveApplication) => leaveApi.update(leave.id, leave),
     onSuccess: () => {
@@ -41,6 +45,7 @@ const ViewActiveLeaves: React.FC = () => {
     },
   });
 
+  //to update the user on approval
   const updateUserMutation = useMutation({
     mutationFn: (userData: User) =>
       userApi.update(userData.id as string, userData),
@@ -65,6 +70,7 @@ const ViewActiveLeaves: React.FC = () => {
     );
   };
 
+  //to handle reject and update the user leave balance
   const handleReject = async (leave: LeaveApplication) => {
     try {
       await approveRejectMutation.mutateAsync({
@@ -194,7 +200,9 @@ const ViewActiveLeaves: React.FC = () => {
             })
           ) : (
             <tr>
-              <td className="no-leave-message" colSpan={8}>No active leaves</td>
+              <td className="no-leave-message" colSpan={8}>
+                No active leaves
+              </td>
             </tr>
           )}
         </tbody>

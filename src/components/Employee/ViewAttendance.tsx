@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { AgCharts } from "ag-charts-react";
 import { AgChartOptions } from "ag-charts-community";
 import "../css/ViewAttendance.css";
@@ -12,7 +12,6 @@ import { userApi } from "../../api/apiCalls";
  *
  * This component fetches the user's leave data and visualizes the consumed and available leave balances
  * for paid and unpaid leaves. It uses the AgCharts library to render the chart.
- *
  *
  * @returns {JSX.Element} The rendered LeaveBalanceChart component.
  *
@@ -39,6 +38,10 @@ interface LeaveData {
 
 const LeaveBalanceChart: React.FC = () => {
   const userId = useSelector((state: RootState) => state.auth.id);
+
+  useEffect(()=>{
+      document.title="Leave Balance"
+    },[])
 
   const {
     data: userData,

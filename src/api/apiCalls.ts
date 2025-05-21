@@ -3,7 +3,7 @@ import { User, LeaveApplication } from "../types";
 
 const API_URL = "http://localhost:3001";
 
-/* User related API calls */
+// User related API calls
 export const userApi = {
   // Get all users
   getAll: async (): Promise<User[]> => {
@@ -98,9 +98,8 @@ export const userApi = {
   },
 };
 
-/**
- * Leave application related API calls
- */
+//Leave Applications Api calls
+
 export const leaveApi = {
   // Get all leave applications
   getAll: async (): Promise<LeaveApplication[]> => {
@@ -207,7 +206,7 @@ export const leaveApi = {
     }
   },
 
-  // Update manager for all leave applications of an employee
+  // Update manager for all leave applications of an employee if manager is changed/deleted
   updateManagerForEmployee: async (
     employeeId: string,
     newManagerId: string
@@ -230,9 +229,8 @@ export const leaveApi = {
   },
 };
 
-/**
- * Combined operations that affect multiple resources
- */
+
+//combined API calls
 export const combinedOperations = {
   // Apply for leave (creates leave application and updates user leave balance)
   applyForLeave: async (
@@ -284,6 +282,7 @@ export const combinedOperations = {
     }
   },
 
+  //deleting a user and deleting all leave applications
   deleteUserAndCleanup: async (
     userId: string,
     defaultManagerId: string
@@ -317,7 +316,7 @@ export const combinedOperations = {
           currentManager: defaultManagerId,
         });
       }
-
+      
       // Step 4: Delete the user
       await userApi.delete(userId);
     } catch (error) {

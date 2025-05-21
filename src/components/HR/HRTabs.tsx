@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import CommonTabs from "../CommonTabs";
-import {  FaUserCheck, FaUserPlus, FaUsersViewfinder } from "react-icons/fa6";
+import {  FaUserCheck, FaUserGroup, FaUserPlus, FaUsersViewfinder } from "react-icons/fa6";
 
 /**
  * HRTabs component for rendering HR-specific navigation tabs.
@@ -32,6 +32,13 @@ const HRTabs: React.FC = () => {
       >
         <FaUserCheck/>
         View Employees
+      </NavLink>
+      <NavLink
+        to="view-active-team-leaves"
+        className={({ isActive }) => `tab ${isActive ? "active" : ""}`}
+      >
+        <FaUserGroup/>
+        Show Team Leaves
       </NavLink>
       <NavLink
         to="leaves"

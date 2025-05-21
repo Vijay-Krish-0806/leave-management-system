@@ -31,6 +31,9 @@ const LoginPage: React.FC = () => {
   const dispatch = useDispatch();
   const auth = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
+    useEffect(() => {
+      document.title = "Login Page";
+    }, []);
 
   useEffect(() => {
     if (auth.email) {

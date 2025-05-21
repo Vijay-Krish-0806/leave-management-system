@@ -21,7 +21,6 @@ import { userApi } from "../../api/apiCalls";
  * role, department, and leave history. It also shows the manager's name and allows
  * navigation back to the previous page.
  *
- *
  * @returns {JSX.Element} The rendered EmployeeDetails component.
  *
  * @example
@@ -61,6 +60,10 @@ const EmployeeDetails = () => {
     queryFn: () => userApi.getById(userId as string),
   });
 
+  useEffect(() => {
+    document.title = "Employee details";
+  }, []);
+
   const {
     data: userLeaves,
     isLoading: isLeavesLoading,
@@ -70,6 +73,7 @@ const EmployeeDetails = () => {
     queryFn: getAllLeaves,
   });
 
+  //to get the manager name based on manager ID
   const getManagerName = async () => {
     if (userData && userData.managerId) {
       try {
@@ -89,6 +93,7 @@ const EmployeeDetails = () => {
     }
   }, [userData]);
 
+  //when go back is clicked to navigate to previous page
   const handleNavigate = () => {
     navigate(-1);
   };

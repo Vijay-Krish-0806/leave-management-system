@@ -23,11 +23,6 @@ import "../css/Table.css";
  *
  * @returns {JSX.Element} The rendered LeaveHistory component.
  *
- * @typedef {Object} LeaveHistoryProps
- * @property {LeaveApplication[] | undefined} leaves - The leave applications to display.
- * @property {boolean} isLoading - Indicates if the leave history is loading.
- * @property {string[]} managerNames - Names of managers who approved the leave applications.
- * @property {(leave: LeaveApplication) => void} onEditLeave - Function to call when editing a leave application.
  *
  * @function handleCancelLeave
  * @param {LeaveApplication} leave - The leave application to cancel.
@@ -51,12 +46,11 @@ const LeaveHistory: React.FC<LeaveHistoryProps> = ({
   managerNames,
   onEditLeave,
 }) => {
-  const [filterType, setFilterType] = useState<string>("All");
-  const [filterStatus, setFilterStatus] = useState<string>("All");
-
   const auth = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
+  const [filterType, setFilterType] = useState<string>("All");
+  const [filterStatus, setFilterStatus] = useState<string>("All");
 
   const getStatusClass = (status: string) => {
     switch (status.toLowerCase()) {
@@ -73,6 +67,7 @@ const LeaveHistory: React.FC<LeaveHistoryProps> = ({
     }
   };
 
+  //to get filtered leaves
   const filteredLeaves = useMemo(() => {
     if (!leaves) return [];
     return leaves.filter((leave) => {
@@ -82,6 +77,8 @@ const LeaveHistory: React.FC<LeaveHistoryProps> = ({
       return matchesType && matchesStatus;
     });
   }, [leaves, filterType, filterStatus]);
+
+  //to cancel a leave
   const handleCancelLeave = async (leave: LeaveApplication) => {
     if (!["pending", "approved"].includes(leave.status)) {
       toast.error("Only pending or approved leave requests can be cancelled.");
@@ -134,6 +131,8 @@ const LeaveHistory: React.FC<LeaveHistoryProps> = ({
       toast.error("Failed to cancel leave request. Please try again.");
     }
   };
+  //utility function to know whether to enable or disable actions
+  //disabled edit/cancel if leave already starts
   const canPerformActions = (leave: LeaveApplication) => {
     if (leave.status === "pending") {
       return true;

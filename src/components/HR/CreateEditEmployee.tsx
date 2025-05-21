@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   FaPlus,
   FaSave,
@@ -31,13 +31,6 @@ import { DEPARTMENTS, LEAVE_BALANCE } from "../../constants";
  * @param {boolean} props.isModalOpen - Indicates if the modal is open.
  *
  * @returns {JSX.Element} The rendered CreateEditEmployee component.
- *
- * @typedef {Object} EmployeeFormProps
- * @property {boolean} [isEditMode] - Flag to indicate if the form is for editing an employee.
- * @property {User } [initialUser ] - The initial user data for the employee being edited.
- * @property {() => void} [onClose] - Function to call when closing the modal.
- * @property {boolean} isModalOpen - Flag to indicate if the modal is currently open.
- *
  * @function handleSubmit
  * Handles the form submission for creating or updating an employee.
  * @param {React.FormEvent<HTMLFormElement>} event - The form submission event.
@@ -63,13 +56,19 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
   const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Use the userApi.getAll function from apiCalls
+  //to get role for dynamic filtering
+  const roleRef = useRef<HTMLSelectElement | null>(null);
+
+  useEffect(() => {
+    document.title = "Create Employee";
+  }, []);
+
   const { data: usersList } = useQuery({
     queryKey: ["users"],
     queryFn: userApi.getAll,
   });
 
-  // Create mutation using userApi.create
+  //to create a user
   const createMutation = useMutation({
     mutationFn: userApi.create,
     onSuccess: () => {
@@ -83,7 +82,7 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
     },
   });
 
-  // Update mutation using userApi.update
+//to update the user
   const updateMutation = useMutation({
     mutationFn: (userData: User) =>
       userApi.update(userData.id as string, userData),
@@ -98,7 +97,7 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
     },
   });
 
-  // Leave applications update mutation
+  //when manager is updated 
   const updateManagerMutation = useMutation({
     mutationFn: ({
       employeeId,
@@ -167,7 +166,6 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
 
       if (isEditMode) {
         userData.id = initialUser?.id;
-        // Clean up undefined values
         Object.keys(userData).forEach(
           (key) =>
             userData[key as keyof User] === undefined &&
@@ -214,7 +212,11 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
         )}
       </div>
 
-      <form onSubmit={handleSubmit} className="employee-form" id="create-user-form">
+      <form
+        onSubmit={handleSubmit}
+        className="employee-form"
+        id="create-user-form"
+      >
         <div className="form-row">
           {!isEditMode ? (
             <>
@@ -304,6 +306,7 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
               id="role"
               defaultValue={initialUser?.role || ""}
               required
+              ref={roleRef}
             >
               <option value="">Select Role</option>
               <option value="employee">Employee</option>
@@ -318,7 +321,11 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
             </label>
             <DropDownWithSearch
               usersList={
-                usersList?.filter((user: User) => user.role === "manager") || []
+                roleRef.current && roleRef.current.value === "manager"
+                  ? usersList?.filter(
+                      (user: User) => user.role === "manager"
+                    ) || []
+                  : usersList?.filter((user: User) => user.role === "HR") || []
               }
               //@ts-ignore
               initialUser={initialUser}

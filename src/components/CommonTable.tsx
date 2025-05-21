@@ -1,7 +1,7 @@
 import React from "react";
 import { FaSpinner } from "react-icons/fa";
 
-interface Column<T> {
+export interface Column<T> {
   header: string;
   accessor: keyof T | ((item: T) => React.ReactNode);
 }

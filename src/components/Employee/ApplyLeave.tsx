@@ -5,6 +5,7 @@ import {
   eachDayOfInterval,
   format,
   areIntervalsOverlapping,
+  isEqual,
 } from "date-fns";
 import "react-datepicker/dist/react-datepicker.css";
 import { useSelector, useDispatch } from "react-redux";
@@ -30,17 +31,6 @@ import { FaRightLong } from "react-icons/fa6";
 <LeaveManagement />
 );
  * @returns {JSX.Element} The rendered LeaveManagement component.
- * @typedef {Object} LeaveManagementState
- * @property {string[]} managerNames - List of manager names for the user.
- * @property {[Date | null, Date | null]} dateRange - Selected date range for the leave.
- * @property {string} leaveType - Type of leave selected by the user.
- * @property {string} leaveReason - Reason for the leave.
- * @property {boolean} isEditing - Indicates if the user is editing an existing leave request.
- * @property {string | null} editLeaveId - ID of the leave being edited, if applicable.
- * @property {string} managerId - ID of the user's manager.
- * @property {boolean} isPopupOpen - Indicates if the leave application popup is open.
- * @property {Object} errors - Validation errors for the form.
- * @property {Object[]} leaves - List of approved leave applications for the user.
  * @function handleChange
  * @function resetForm
 Resets the leave application form to its initial state.
@@ -64,7 +54,6 @@ const LeaveManagement: React.FC = () => {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const [managerNames, setManagerNames] = useState<string[]>([]);
-  // Form state
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([
     null,
     null,
@@ -73,14 +62,15 @@ const LeaveManagement: React.FC = () => {
   const [leaves, setLeaves] = useState<
     { startDate: string; endDate: string }[]
   >([]);
-
   const [leaveType, setLeaveType] = useState<string>("");
   const [leaveReason, setLeaveReason] = useState<string>("");
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editLeaveId, setEditLeaveId] = useState<string | null>(null);
   const [managerId, setManagerId] = useState<string>();
-
-  // Popup state
+  // Store original leave data for comparison when editing
+  const [originalLeave, setOriginalLeave] = useState<LeaveApplication | null>(
+    null
+  );
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
   // Validation errors
   const [errors, setErrors] = useState({
@@ -90,6 +80,7 @@ const LeaveManagement: React.FC = () => {
     isLeaveOverlapping: false,
   });
 
+  //API calls
   const { data: userLeaves, isLoading } = useQuery({
     queryKey: ["leave-applications"],
     queryFn: () => leaveApi.getByEmployeeId(auth.id),
@@ -102,13 +93,15 @@ const LeaveManagement: React.FC = () => {
   });
 
   useEffect(() => {
+    document.title = "Apply Leave";
+  }, []);
+
+  useEffect(() => {
     if (!auth.id) {
       return;
     }
     if (user) {
-      if (user) {
-        setManagerId(user.managerId);
-      }
+      setManagerId(user.managerId);
     }
   }, [user]);
 
@@ -148,29 +141,32 @@ const LeaveManagement: React.FC = () => {
     const end = endDate;
     return eachDayOfInterval({ start, end });
   });
+  //used to highlight the HOLIDAYS and approved leaves in calendar
   const highlightWithRanges = [
     { "react-datepicker__day--highlighted-holiday": HOLIDAYS },
     { "react-datepicker__day--highlighted-leave": leaveDates },
   ];
 
-  const businessDaysCount = useMemo(() => {
-    if (!startDate) return 0;
-    const realEnd = endDate || startDate;
-    const allDays = eachDayOfInterval({ start: startDate, end: realEnd });
+  //to count total working days excluding weekends
+  const totalWorkingDays = useMemo(() => {
+    if (!startDate || !endDate) return 0;
+    const allDays = eachDayOfInterval({ start: startDate, end: endDate });
     return allDays.filter((d) => !isWeekend(d)).length;
   }, [startDate, endDate]);
 
+  //to handle date ranges
   const handleChange = (update: [Date | null, Date | null]) => {
     setDateRange(update);
     if (errors.dateRange) setErrors((prev) => ({ ...prev, dateRange: false }));
   };
-
+  //reset the form after submitting
   const resetForm = () => {
     setDateRange([null, null]);
     setLeaveType("");
     setLeaveReason("");
     setIsEditing(false);
     setEditLeaveId(null);
+    setOriginalLeave(null);
     setIsPopupOpen(false);
   };
 
@@ -182,22 +178,39 @@ const LeaveManagement: React.FC = () => {
     resetForm();
   };
 
+  //to check whether current applied leave is already existed (range)
   const checkIsLeaveOverlapping = () => {
-    const overlappingLeaves = userLeaves?.filter(
-      (leave) =>
+    if (isEditing && originalLeave) {
+      const originalStartDate = new Date(originalLeave.startDate);
+      const originalEndDate = new Date(originalLeave.endDate);
+
+      if (
+        startDate &&
+        endDate &&
+        isEqual(originalStartDate, startDate) &&
+        isEqual(originalEndDate, endDate)
+      ) {
+        return false;
+      }
+    }
+
+    const overlappingLeaves = userLeaves?.filter((leave) => {
+      if (isEditing && leave.id === editLeaveId) return false;
+
+      return (
         (leave.status === "approved" || leave.status === "pending") &&
+        startDate &&
+        endDate &&
         areIntervalsOverlapping(
           { start: new Date(leave.startDate), end: new Date(leave.endDate) },
-          {
-            start: new Date(startDate as Date),
-            end: new Date(endDate as Date),
-          },
+          { start: startDate, end: endDate },
           { inclusive: true }
         )
-    );
+      );
+    });
     return overlappingLeaves && overlappingLeaves.length > 0;
   };
-  // Only require startDate now
+
   const validateForm = () => {
     const newErrors = {
       dateRange: !startDate || !endDate,
@@ -209,6 +222,7 @@ const LeaveManagement: React.FC = () => {
     return !Object.values(newErrors).some(Boolean);
   };
 
+  //to handle editing of leave
   const handleEditLeave = (leave: LeaveApplication) => {
     if (!["pending", "approved"].includes(leave.status)) {
       toast.error("Only pending leave requests can be edited.");
@@ -219,7 +233,23 @@ const LeaveManagement: React.FC = () => {
     setLeaveType(leave.type);
     setLeaveReason(leave.reason);
     setDateRange([new Date(leave.startDate), new Date(leave.endDate)]);
+    setOriginalLeave(leave);
     setIsPopupOpen(true);
+  };
+
+  //when editing the existing leave check if only reason is changed
+  const isOnlyReasonChanged = (): boolean => {
+    if (!isEditing || !originalLeave || !startDate || !endDate) return false;
+
+    const originalStartDate = new Date(originalLeave.startDate);
+    const originalEndDate = new Date(originalLeave.endDate);
+
+    return (
+      isEqual(originalStartDate, startDate) &&
+      isEqual(originalEndDate, endDate) &&
+      originalLeave.type === leaveType &&
+      originalLeave.reason !== leaveReason
+    );
   };
 
   const handleSubmitLeave = async () => {
@@ -227,12 +257,29 @@ const LeaveManagement: React.FC = () => {
       toast.error("Please fill in all required fields");
       return;
     }
+    //if only reason is changed no need to send new request
+    if (isEditing && isOnlyReasonChanged()) {
+      try {
+        await leaveApi.update(editLeaveId as string, {
+          ...originalLeave!,
+          reason: leaveReason,
+        });
+        await queryClient.invalidateQueries({
+          queryKey: ["leave-applications"],
+        });
+        resetForm();
+        return;
+      } catch (e) {
+        console.error(e);
+        return;
+      }
+    }
+
     try {
       const id = isEditing ? editLeaveId! : Date.now().toString();
       const createdAt = isEditing
-        ? userLeaves?.find((l) => l.id === editLeaveId)?.createdAt ||
-          new Date().toISOString()
-        : new Date().toISOString();
+        ? userLeaves?.find((l) => l.id === editLeaveId)?.createdAt || new Date()
+        : new Date();
 
       const leaveApplication = {
         id,
@@ -250,7 +297,7 @@ const LeaveManagement: React.FC = () => {
 
       let updatedLeaveBalance = user?.leaveBalance || 20;
       let updatedUnpaid = user?.unpaidLeaves || 0;
-      const days = businessDaysCount;
+      const days = totalWorkingDays;
       if (!isEditing) {
         if (leaveType === "paid") {
           if (days > ((user && user.leaveBalance) || 0)) {
@@ -277,8 +324,10 @@ const LeaveManagement: React.FC = () => {
         toast.success("Leave application submitted successfully!");
       } else {
         const originalLeave = userLeaves?.find((l) => l.id === editLeaveId);
-        const originalDays = businessDaysCount;
+        const originalDays = totalWorkingDays;
         const originalType = originalLeave?.type;
+
+        //when editing the leave if type of leave is changed, change the leave balances accordingly
 
         if (originalType === "paid") {
           updatedLeaveBalance += originalDays;
@@ -329,7 +378,6 @@ const LeaveManagement: React.FC = () => {
           <h1 className="calendar-heading">Calendar</h1>
           <DatePicker
             //@ts-ignore
-
             highlightDates={highlightWithRanges}
             inline
           />
@@ -493,7 +541,7 @@ const LeaveManagement: React.FC = () => {
                     </div>
                     <div className="leave-detail total-days">
                       <span className="detail-label">Total weekdays:</span>
-                      <span className="detail-value">{businessDaysCount}</span>
+                      <span className="detail-value">{totalWorkingDays}</span>
                     </div>
                   </div>
                   <div className="action-buttons">
@@ -501,7 +549,11 @@ const LeaveManagement: React.FC = () => {
                       className="submit-button"
                       onClick={handleSubmitLeave}
                     >
-                      {isEditing ? "Update Leave Request" : "Request Leave"}
+                      {isEditing
+                        ? isOnlyReasonChanged()
+                          ? "Update Reason"
+                          : "Update Leave Request"
+                        : "Request Leave"}
                     </button>
                     {isEditing && (
                       <button

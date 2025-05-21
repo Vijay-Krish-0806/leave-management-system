@@ -22,5 +22,5 @@ export interface LeaveApplication {
   approvedBy?: string | null;
   currentManager?: string;
   reason: string;
-  createdAt: string;
+  createdAt: Date;
 }

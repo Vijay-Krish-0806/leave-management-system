@@ -59,8 +59,7 @@ export const roleSpecificRoutes = {
   [ROLES.HR]: [
     {
       path: "create",
-      //@ts-ignore
-      element: <CreateEditEmployee />,
+      element: <CreateEditEmployee isModalOpen={false} />,
       name: "Add Employee",
     },
     {
@@ -77,6 +76,11 @@ export const roleSpecificRoutes = {
       path:"employee-details/:userId",
       element:<EmployeeDetails/>,
       name:"Employee details"
+    },
+    {
+      path:"view-active-team-leaves",
+      element:<ViewActiveLeaves/>,
+      name:"Active leave details"
     }
   ],
 };
