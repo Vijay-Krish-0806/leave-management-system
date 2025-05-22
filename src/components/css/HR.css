@@ -9,8 +9,9 @@
   transition: all 0.3s ease;
   position: relative;
   scrollbar-width: none;
+  user-select: none;
 }
-*/
+
 .modal-overlay .employee-form-container {
   position: relative;
   top: 0;
@@ -82,6 +83,11 @@
   color: #4b5563;
 }
 
+.form-group label::after{
+  content:"*";
+  color:red
+}
+
 .input-icon {
   margin-right: 8px;
   color: #6366f1;
@@ -100,6 +106,7 @@ select {
   transition: border-color 0.2s, box-shadow 0.2s;
   background-color: #f9fafb;
 }
+
 
 
 input:focus,
@@ -144,6 +151,8 @@ select {
   border-color: #6366f1;
 }
 
+
+
 .radio-option input[type="radio"]:checked::after {
   content: "";
   position: absolute;
@@ -159,6 +168,10 @@ select {
 .radio-option label {
   cursor: pointer;
   margin-bottom: 0;
+}
+
+.radio-option label::after{
+  content:""
 }
 
 /* Form actions */

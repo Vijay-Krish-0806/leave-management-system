@@ -14,7 +14,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { User } from "../../types";
 import "../css/HR.css";
 import DropDownWithSearch from "../DropDownWithSearch";
-import { userApi, leaveApi } from "../../api/apiCalls"; // Import API functions
+import { userApi, leaveApi } from "../../api/apiCalls"; 
 import { DEPARTMENTS, LEAVE_BALANCE } from "../../constants";
 
 /**

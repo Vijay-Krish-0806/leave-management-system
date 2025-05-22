@@ -123,10 +123,7 @@ const ViewEmployees: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filterRole, setFilterRole] = useState<string>("All");
   const [filterDept, setFilterDept] = useState<string>("All");
-  const [sortConfig, setSortConfig] = useState<SortConfig | null>({
-    key: "username",
-    direction: "asc",
-  });
+  const [sortConfig, setSortConfig] = useState<SortConfig | null>();
 
   useEffect(() => {
     document.title = "View Employees";
@@ -269,7 +266,7 @@ const ViewEmployees: React.FC = () => {
           <thead className="table-header">
             <tr>
               <th>Index</th>
-              <th onClick={() => handleSort("username")}>
+              <th onClick={() => handleSort("username")} className="sortable">
                 Username{" "}
                 {sortConfig?.key === "username" &&
                   (sortConfig.direction === "asc" ? (

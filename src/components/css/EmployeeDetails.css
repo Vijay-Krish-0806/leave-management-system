@@ -112,6 +112,7 @@
   
   /* Leaves Section */
   .leaves-section {
+    user-select: none;
     flex: 2;
     min-width: 600px;
   }
@@ -167,7 +168,7 @@
   }
   
   /* Loading and Error States */
-  .loading, .error {
+  .loading {
     padding: 20px;
     text-align: center;
     border-radius: 8px;
@@ -179,7 +180,6 @@
   }
   
   .error {
-    background-color: #ffebee;
     color: #c62828;
   }
   

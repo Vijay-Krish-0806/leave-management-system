@@ -37,8 +37,10 @@ export const commonRoutes = [
 // Role specific routes
 export const roleSpecificRoutes = {
   [ROLES.EMPLOYEE]: [
-    // Employee-specific routes go here
+    // Employee-specific routes 
   ],
+
+  // Manager-specific routes 
   [ROLES.MANAGER]: [
     {
       path: "view-team",
@@ -56,6 +58,7 @@ export const roleSpecificRoutes = {
       name: "View Team Leaves",
     },
   ],
+  // HR-specific routes 
   [ROLES.HR]: [
     {
       path: "create",
@@ -85,7 +88,7 @@ export const roleSpecificRoutes = {
   ],
 };
 
-// Role components
+// Role index components
 export const roleComponents = {
   [ROLES.EMPLOYEE]: EmployeePage,
   [ROLES.MANAGER]: ManagerPage,

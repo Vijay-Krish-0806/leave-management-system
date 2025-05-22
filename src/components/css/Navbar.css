@@ -7,6 +7,7 @@
   padding: 12px 24px;
   font-family: "Segoe UI", Arial, sans-serif;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  user-select: none;
 }
 
 /* Logo styling */
@@ -14,7 +15,8 @@
   font-size: 1.8rem;
   font-weight: bold;
   cursor: pointer;
-  user-select: none;
+  display: flex;
+  align-items: center;
   transition: color 0.2s ease;
 }
 

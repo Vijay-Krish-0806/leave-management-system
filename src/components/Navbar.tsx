@@ -43,7 +43,7 @@ const Navbar = () => {
           height={"30px"}
           style={{ marginRight: "5px" }}
         />
-        Paltech
+        <span>Paltech</span>
       </div>
       <div className="navbar-right">
         <div className="navbar-username">{username}</div>

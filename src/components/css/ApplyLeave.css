@@ -13,7 +13,6 @@
   --shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   --hover-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
   --border-radius: 6px;
-  --transition: all 0.3s cubic-bezier(0.4, 0.2, 0.2, 1);
 }
 
 .leave-management-container {
@@ -36,7 +35,6 @@
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  transition: var(--transition);
   box-shadow: 0 2px 4px rgba(74, 111, 165, 0.25);
   display: flex;
   align-items: center;
@@ -61,7 +59,6 @@
   border-radius: var(--border-radius);
   box-shadow: var(--shadow);
   padding: 25px;
-  transition: var(--transition);
 }
 
 /* Common hover effect */
@@ -79,7 +76,7 @@
   justify-content: center;
   align-items: center;
   padding: 10px 28px;
-  max-height: 400px;
+  max-height: 420px;
 }
 
 .calendar-heading {
@@ -141,10 +138,12 @@
   max-width: 600px;
   max-height: 90vh;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  border-left: 4px solid var(--primary-dark);
+  user-select: none;
+
 }
 
 .leave-application {
-  border-left: 4px solid var(--primary-dark);
   padding: 10px 28px;
   position: relative;
 }
@@ -174,7 +173,6 @@
   justify-content: center;
   align-items: center;
   border-radius: 50%;
-  transition: var(--transition);
 }
 
 .close-popup-button:hover {
@@ -206,7 +204,6 @@
   border: 1.5px solid var(--border-color);
   border-radius: 8px;
   font-size: 14px;
-  transition: var(--transition);
   background-color: #fcfdfe;
   color: var(--text-color);
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
@@ -250,6 +247,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
+
 }
 
 .error-message::before {
@@ -274,6 +272,7 @@
   padding: 10px 10px 10px;
   margin-bottom: 20px;
   border-left: 4px solid var(--primary-color);
+  user-select: none;
 }
 
 .leave-summary h3 {
@@ -326,7 +325,6 @@
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
-  transition: var(--transition);
   font-size: 14px;
   letter-spacing: 0.02em;
 }
@@ -360,6 +358,7 @@
   font-size: 1rem;
   padding-bottom: 5px;
   border-bottom: 1px solid var(--border-color);
+  user-select: none;
 }
 
 .filter-container {
@@ -378,8 +377,13 @@
 }
 
 .filters select {
-  margin-bottom: 10px;
-  height: 45px;
+  appearance: none;
+  padding-right: 30px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%234a6fa5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+  cursor: pointer;
 }
 
 .loading {
@@ -597,12 +601,6 @@
   border-radius: 50% !important;
   color: #333 !important;
   font-weight: 500 !important;
-  transition: var(--transition) !important;
-}
-
-.react-datepicker__day:hover {
-  background-color: #fff !important;
-  border-radius: 50% !important;
 }
 
 .react-datepicker__day--selected {

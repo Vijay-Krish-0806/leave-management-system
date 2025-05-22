@@ -19,7 +19,7 @@ import LeaveHistory from "./LeaveHistory";
 import { HOLIDAYS } from "../../constants";
 import { combinedOperations, leaveApi, userApi } from "../../api/apiCalls";
 import "../css/ApplyLeave.css";
-import { FaRightLong } from "react-icons/fa6";
+import { FaPlus } from "react-icons/fa6";
 
 /**
  * LeaveManagement component for handling leave applications.
@@ -151,7 +151,9 @@ const LeaveManagement: React.FC = () => {
   const totalWorkingDays = useMemo(() => {
     if (!startDate || !endDate) return 0;
     const allDays = eachDayOfInterval({ start: startDate, end: endDate });
-    return allDays.filter((d) => !isWeekend(d)).length;
+    return allDays.filter(
+      (d) => !isWeekend(d) && !HOLIDAYS.includes(d.toISOString().split("T")[0])
+    ).length;
   }, [startDate, endDate]);
 
   //to handle date ranges
@@ -176,6 +178,12 @@ const LeaveManagement: React.FC = () => {
 
   const closePopup = () => {
     resetForm();
+    setErrors({
+      dateRange: false,
+      leaveType: false,
+      leaveReason: false,
+      isLeaveOverlapping: false,
+    });
   };
 
   //to check whether current applied leave is already existed (range)
@@ -368,8 +376,8 @@ const LeaveManagement: React.FC = () => {
     <div className="leave-management-container">
       <div className="top-container">
         <button className="request-leave-button" onClick={openPopup}>
-          <FaRightLong />
           Request Leave
+          <FaPlus />
         </button>
       </div>
 
@@ -426,6 +434,7 @@ const LeaveManagement: React.FC = () => {
                     selectsRange
                     minDate={new Date()}
                     startDate={startDate}
+                    dateFormat="dd-MM-YYYY"
                     endDate={endDate}
                     onChange={handleChange}
                     isClearable
