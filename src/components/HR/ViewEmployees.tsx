@@ -15,58 +15,24 @@ import { useNavigate } from "react-router-dom";
 import api from "../../api/apiCalls";
 import { DEFAULT_MANAGER_ID, DEPARTMENTS, ROLES } from "../../constants";
 import "../css/Table.css";
-
-/**
- * ViewEmployees component for displaying and managing a list of employees.
- *
- * This component fetches employee data, allows searching, filtering, sorting,
- * and provides options to add, edit, or delete employees. It also displays
- * a modal for creating or editing employee details.
- *
- *
- * @returns {JSX.Element} The rendered ViewEmployees component.
- *
- * @example
- * return <ViewEmployees />;
- *
- * @function deleteUser
- * Deletes a user based on the provided user ID.
- * @param {string} id - The ID of the user to delete.
- * @returns {Promise<{ success: boolean }>} A promise that resolves when the user is deleted.
- *
- * @function handleEdit
- * Opens the modal for editing the selected user.
- * @param {User } user - The user object to edit.
- *
- * @function handleSort
- * Sorts the user list based on the specified key.
- * @param {keyof User} key - The key to sort by.
- *
- * @function handleDelete
- * Confirms and deletes the selected user.
- * @param {string} id - The ID of the user to delete.
- *
- * @function handleUser Details
- * Navigates to the user details page for the selected user.
- * @param {string} userId - The ID of the user to view details for.
- *
- * @function handleAddEmployee
- * Opens the modal for adding a new employee.
- *
- * @function handleCloseModal
- * Closes the modal for creating or editing an employee.
- */
-
 type SortConfig = {
   key: keyof User;
   direction: "asc" | "desc";
 };
+/**
+ * @description
+ *  ViewEmployees component for displaying and managing a list of employees.
+ *
+ * This component fetches employee data, allows searching, filtering, sorting,
+ * and provides options to add, edit, or delete employees. It also displays
+ * a modal for creating or editing employee details.
+ * @returns {void}
+ */
 const ViewEmployees: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<Partial<User>>();
   const [isEditMode, setIsEditMode] = useState(false);
   const queryClient = useQueryClient();
-
   const {
     isLoading,
     isError,
@@ -79,6 +45,11 @@ const ViewEmployees: React.FC = () => {
   const countOfHRs = users?.filter((user) => user.role === "HR");
   const defaultManager = users?.find((user) => user.id === DEFAULT_MANAGER_ID);
   //cannot delete if there is only one HR or default manager
+  /**
+   * @description to delete the user
+   * @param {string} id
+   * @returns {void}
+   */
   const deleteUser = async (id: string) => {
     if (
       (countOfHRs &&
@@ -88,12 +59,10 @@ const ViewEmployees: React.FC = () => {
     ) {
       throw new Error("Cannot delete the user");
     }
-
     if (!defaultManager) {
       toast.error("Default manager not found");
       throw new Error("Default manager not found");
     }
-
     try {
       await api.combined.deleteUserAndCleanup(id, defaultManager.id as string);
       return { success: true };
@@ -101,7 +70,6 @@ const ViewEmployees: React.FC = () => {
       throw error;
     }
   };
-
   const deleteMutation = useMutation({
     mutationFn: deleteUser,
     onSuccess: () => {
@@ -113,26 +81,26 @@ const ViewEmployees: React.FC = () => {
       toast.error("Failed to delete user");
     },
   });
-
+  /**
+   * @description to edit the user details
+   * @param {User} user
+   * @returns {void}
+   */
   const handleEdit = (user: User) => {
     setSelectedUser(user);
     setIsEditMode(true);
     setIsModalOpen(true);
   };
-
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filterRole, setFilterRole] = useState<string>("All");
   const [filterDept, setFilterDept] = useState<string>("All");
   const [sortConfig, setSortConfig] = useState<SortConfig | null>();
-
   useEffect(() => {
     document.title = "View Employees";
   }, []);
-
   const filteredUsers = useMemo(() => {
     if (!users) return [];
     let result = [...users];
-
     // Search
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
@@ -159,7 +127,11 @@ const ViewEmployees: React.FC = () => {
     }
     return result;
   }, [users, searchTerm, filterRole, filterDept, sortConfig]);
-
+  /**
+   * @description to handle sort type ascending|descending
+   * @param {keyof User} key
+   * @returns {void}
+   */
   const handleSort = (key: keyof User) => {
     let direction: "asc" | "desc" = "asc";
     if (
@@ -171,6 +143,11 @@ const ViewEmployees: React.FC = () => {
     }
     setSortConfig({ key, direction });
   };
+  /**
+   * @description function to delete the user
+   * @param {string} id
+   * @returns {void}
+   */
   const handleDelete = (id: string) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this user?"
@@ -180,10 +157,18 @@ const ViewEmployees: React.FC = () => {
     }
   };
   const navigate = useNavigate();
+  /**
+   * @description to navigate to particular user details page
+   * @param {string} userId
+   * @returns {void}
+   */
   const handleUserDetails = (userId: string) => {
     navigate(`/dashboard/HR/employee-details/${userId}`);
   };
-
+  /**
+   * @description to add a new user
+   * @returns {void}
+   */
   const handleAddEmployee = () => {
     // Create an empty user object for the create form
     setSelectedUser({
@@ -198,12 +183,14 @@ const ViewEmployees: React.FC = () => {
     setIsEditMode(false);
     setIsModalOpen(true);
   };
-
+  /**
+   * @description to close the opened popup
+   * @returns {void}
+   */
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedUser(undefined);
   };
-
   if (isLoading) {
     return (
       <div className="loading">
@@ -211,11 +198,9 @@ const ViewEmployees: React.FC = () => {
       </div>
     );
   }
-
   if (isError) {
     return <div className="error">Error loading users: {error?.message}</div>;
   }
-
   return (
     <>
       <div className="table-controls">
@@ -333,5 +318,4 @@ const ViewEmployees: React.FC = () => {
     </>
   );
 };
-
 export default ViewEmployees;

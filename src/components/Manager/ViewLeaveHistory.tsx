@@ -6,36 +6,25 @@ import { leaveApi } from "../../api/apiCalls";
 import { useEffect, useMemo, useState } from "react";
 import Table, { Column } from "../CommonTable";
 import { LeaveApplication } from "../../types";
-
 /**
+ * @description
  * ViewLeaveHistory component for displaying a list of leave applications of one's team
  * This component fteches leave application data and filter the data by currentManager id and allows user to search and filter by username and status in a table format.
  *
- * @returns {JSX.Element} The rendered ViewLeaveHistory Component
- *
- * @example
- * return <ViewLeaveHistory/>
- *
- *  @function filteredLeaves
- * Filters the leave applications based on the search term and selected status.
- *  @returns {LeaveApplication[]} The filtered list of leave applications.
+ * @returns {JSX.Element}
  */
-
 const ViewLeaveHistory = () => {
   const auth = useSelector((state: RootState) => state.auth);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filterStatus, setFilterStatus] = useState<string>("All");
-
   const { data: activeLeaves } = useQuery({
     queryKey: ["leave-applications"],
     queryFn: leaveApi.getAll,
     select: (data) => data.filter((leave) => leave.currentManager === auth.id),
   });
-
   useEffect(() => {
     document.title = "Show Leaves";
   }, []);
-
   const filteredLeaves = useMemo(() => {
     if (!activeLeaves) return [];
     return activeLeaves.filter((leave) => {
@@ -47,7 +36,6 @@ const ViewLeaveHistory = () => {
       return matchesUser && matchesStatus;
     });
   }, [activeLeaves, searchTerm, filterStatus]);
-
   const columns: Column<LeaveApplication>[] = [
     { header: "Username", accessor: "requestedBy" },
     {
@@ -67,7 +55,6 @@ const ViewLeaveHistory = () => {
     },
     { header: "Status", accessor: "status" },
   ];
-
   return (
     <>
       <div className="table-controls">
@@ -100,5 +87,4 @@ const ViewLeaveHistory = () => {
     </>
   );
 };
-
 export default ViewLeaveHistory;

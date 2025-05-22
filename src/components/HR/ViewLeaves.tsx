@@ -1,30 +1,19 @@
 
-/**
- * ViewLeaves component for displaying a list of leave applications.
- *
- * This component fetches leave application data and allows users to search
- * by username and filter by leave status. It displays the leave applications
- * in a table format.
- *
- *
- * @returns {JSX.Element} The rendered ViewLeaves component.
- *
- * @example
- * return <ViewLeaves />;
- *
- * @function filteredLeaves
- * Filters the leave applications based on the search term and selected status.
- * @returns {LeaveApplication[]} The filtered list of leave applications.
- */
-
-
 import React, { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import Table, { Column } from "../CommonTable";
 import { leaveApi } from "../../api/apiCalls";
 import { LeaveApplication } from "../../types";
-
+/**
+ * @description
+ * ViewLeaves component for displaying a list of leave applications.
+ *
+ * This component fetches leave application data and allows users to search
+ * by username and filter by leave status. It displays the leave applications
+ * in a table format.
+ * @returns {JSX.Element}
+ */
 const ViewLeaves: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filterStatus, setFilterStatus] = useState<string>("All");
@@ -37,10 +26,9 @@ const ViewLeaves: React.FC = () => {
     queryKey: ["leave-applications"],
     queryFn: leaveApi.getAll,
   });
-    useEffect(() => {
-      document.title = "All Leaves";
-    }, []);
-
+  useEffect(() => {
+    document.title = "All Leaves";
+  }, []);
   const filteredLeaves = useMemo(() => {
     if (!leaves) return [];
     return leaves.filter((leave) => {
@@ -52,7 +40,6 @@ const ViewLeaves: React.FC = () => {
       return matchesUser && matchesStatus;
     });
   }, [leaves, searchTerm, filterStatus]);
-
   const columns: Column<LeaveApplication>[] = [
     { header: "User", accessor: "requestedBy" },
     {
@@ -66,7 +53,6 @@ const ViewLeaves: React.FC = () => {
     { header: "Status", accessor: "status" },
     { header: "Reason", accessor: "reason" },
   ];
-
   return (
     <>
       <div className="table-controls">
@@ -102,5 +88,4 @@ const ViewLeaves: React.FC = () => {
     </>
   );
 };
-
 export default ViewLeaves;

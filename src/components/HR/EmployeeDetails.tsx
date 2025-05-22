@@ -13,44 +13,29 @@ import {
 } from "react-icons/fa";
 import "../css/EmployeeDetails.css";
 import { userApi } from "../../api/apiCalls";
-
 /**
+ * @description
  * EmployeeDetails component for displaying detailed information about an employee.
  *
  * This component fetches and displays user data, including personal information,
  * role, department, and leave history. It also shows the manager's name and allows
  * navigation back to the previous page.
- *
- * @returns {JSX.Element} The rendered EmployeeDetails component.
- *
- * @example
- * return <EmployeeDetails />;
- *
- * @function getAllLeaves
- * Fetches all leave applications for the specified employee.
- * @returns {Promise<LeaveApplication[]>} A promise that resolves to the leave applications.
- *
- * @function getManagerName
- * Fetches the name of the employee's manager based on the manager ID.
- * @returns {Promise<void>} A promise that resolves when the manager's name is set.
- *
- * @function handleNavigate
- * Handles navigation back to the previous page.
+ * @returns {JSX.Element}
  */
-
 const EmployeeDetails = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
-
+  /**
+   * @description to get all leave data with particular employee ID
+   * @returns {User[]}
+   */
   const getAllLeaves = async () => {
     const response = await axios.get(
       `http://localhost:3001/leaveApplications/?employeeId=${userId}`
     );
     return response.data;
   };
-
   const [managerName, setManagerName] = useState("");
-
   const {
     data: userData,
     isLoading,
@@ -59,11 +44,9 @@ const EmployeeDetails = () => {
     queryKey: ["users", userId],
     queryFn: () => userApi.getById(userId as string),
   });
-
   useEffect(() => {
     document.title = "Employee details";
   }, []);
-
   const {
     data: userLeaves,
     isLoading: isLeavesLoading,
@@ -72,8 +55,11 @@ const EmployeeDetails = () => {
     queryKey: ["employee-leaves"],
     queryFn: getAllLeaves,
   });
-
   //to get the manager name based on manager ID
+  /**
+   * @description to get the manager name based on manager ID
+   * @returns {void}
+   */
   const getManagerName = async () => {
     if (userData && userData.managerId) {
       try {
@@ -86,21 +72,21 @@ const EmployeeDetails = () => {
       }
     }
   };
-
   useEffect(() => {
     if (userData && userData.managerId) {
       getManagerName();
     }
   }, [userData]);
-
   //when go back is clicked to navigate to previous page
+  /**
+   * @description when go back is clicked to navigate to previous page
+   * @returns {void}
+   */
   const handleNavigate = () => {
     navigate(-1);
   };
-
   if (isLoading) return <div className="loading">Loading user data...</div>;
   if (isError) return <div className="error">Error loading user data</div>;
-
   return (
     <div className="employee-details-container">
       <div className="back-button-container">
@@ -221,5 +207,4 @@ const EmployeeDetails = () => {
     </div>
   );
 };
-
 export default EmployeeDetails;

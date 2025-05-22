@@ -14,31 +14,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { User } from "../../types";
 import "../css/HR.css";
 import DropDownWithSearch from "../DropDownWithSearch";
-import { userApi, leaveApi } from "../../api/apiCalls"; 
+import { userApi, leaveApi } from "../../api/apiCalls";
 import { DEPARTMENTS, LEAVE_BALANCE } from "../../constants";
-
-/**
- * CreateEditEmployee component for creating or editing employee details.
- *
- * This component provides a form for entering employee information, including
- * personal details, role, department, and manager assignment. It supports both
- * creating a new employee and editing an existing employee's information.
- *
- * @param {EmployeeFormProps} props - The props for the CreateEditEmployee component.
- * @param {boolean} [props.isEditMode=false] - Indicates if the component is in edit mode.
- * @param {User } [props.initialUser ] - The initial user data for editing an existing employee.
- * @param {() => void} [props.onClose] - Callback function to close the modal.
- * @param {boolean} props.isModalOpen - Indicates if the modal is open.
- *
- * @returns {JSX.Element} The rendered CreateEditEmployee component.
- * @function handleSubmit
- * Handles the form submission for creating or updating an employee.
- * @param {React.FormEvent<HTMLFormElement>} event - The form submission event.
- *
- * @function handleClose
- * Handles closing the modal when the overlay is clicked.
- * @param {React.MouseEvent<HTMLDivElement>} e - The click event on the modal overlay.
- */
 
 interface EmployeeFormProps {
   isEditMode?: boolean;
@@ -46,7 +23,21 @@ interface EmployeeFormProps {
   onClose?: () => void;
   isModalOpen: boolean;
 }
-
+/**
+* @description 
+*  CreateEditEmployee component for creating or editing employee details.
+*
+* This component provides a form for entering employee information, including
+* personal details, role, department, and manager assignment. It supports both
+* creating a new employee and editing an existing employee's information.
+* @param {EmployeeFormProps} {
+  isEditMode = false,
+  initialUser,
+  onClose,
+  isModalOpen,
+}
+* @returns {JSX.Element}
+*/
 const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
   isEditMode = false,
   initialUser,
@@ -55,20 +46,14 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
 }) => {
   const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const [selectedRole, setSelectedRole] = useState(initialUser?.role || "");
-
-  
-
   useEffect(() => {
     document.title = "Create Employee";
   }, []);
-
   const { data: usersList } = useQuery({
     queryKey: ["users"],
     queryFn: userApi.getAll,
   });
-
   //to create a user
   const createMutation = useMutation({
     mutationFn: userApi.create,
@@ -82,7 +67,6 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
       console.error(error);
     },
   });
-
   //to update the user
   const updateMutation = useMutation({
     mutationFn: (userData: User) =>
@@ -97,7 +81,6 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
       console.error(error);
     },
   });
-
   //when manager is updated
   const updateManagerMutation = useMutation({
     mutationFn: ({
@@ -117,43 +100,40 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
       console.error("Failed to update leave applications:", error);
     },
   });
-
+  /**
+   * @description Function to submit created/edited user details
+   * @param {React.FormEvent<HTMLFormElement>} event
+   * @returns {void}
+   */
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsSubmitting(true);
     const form = event.currentTarget;
     const formData = new FormData(form);
-
     try {
       const username = isEditMode
         ? (formData.get("username") as string)
         : `${formData.get("firstname") || ""} ${
             formData.get("lastname") || ""
           }`.trim();
-
       if (!username) {
         toast.error("Username is required");
         setIsSubmitting(false);
         return;
       }
-
       const email = formData.get("email") as string;
       const role = formData.get("role") as string;
       const gender = formData.get("gender") as string;
       const managerId = formData.get("assigned") as string;
-      console.log(managerId);
       const department = formData.get("department") as string;
-
       const password = isEditMode
         ? initialUser?.password || "welcome"
         : (formData.get("password") as string);
-
       if (!password) {
         toast.error("Password is required");
         setIsSubmitting(false);
         return;
       }
-
       const userData: User = {
         username,
         email,
@@ -165,7 +145,6 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
         leaveBalance: LEAVE_BALANCE,
         unpaidLeaves: 0,
       };
-
       if (isEditMode) {
         userData.id = initialUser?.id;
         Object.keys(userData).forEach(
@@ -179,7 +158,6 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
           userData.id
         ) {
           await updateMutation.mutateAsync(userData);
-
           await updateManagerMutation.mutateAsync({
             employeeId: userData.id,
             managerId: userData.managerId,
@@ -191,18 +169,15 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
         await createMutation.mutateAsync(userData);
         form.reset();
       }
-
       setIsSubmitting(false);
     } catch (error) {
       console.error(error);
       setIsSubmitting(false);
     }
   };
-
   if (isEditMode && !initialUser) {
     return null;
   }
-
   const formContent = (
     <div className={`employee-form-container ${isEditMode ? "edit-mode" : ""}`}>
       <div className="form-header">
@@ -422,7 +397,6 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
       </form>
     </div>
   );
-
   return isModalOpen ? (
     <div
       className="modal-overlay"
@@ -438,5 +412,4 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
     formContent
   );
 };
-
 export default CreateEditEmployee;

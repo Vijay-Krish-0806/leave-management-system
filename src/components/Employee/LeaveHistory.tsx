@@ -9,37 +9,25 @@ import { setUser } from "../../features/auth/authSlice";
 import { combinedOperations } from "../../api/apiCalls";
 import "../css/Table.css";
 
-/**
- * LeaveHistory component for displaying a user's leave applications.
- *
- * This component shows a table of leave applications with options to filter by leave type and status.
- * It allows users to edit or cancel their leave requests based on their current status.
- *
- * @param {LeaveHistoryProps} props - The props for the LeaveHistory component.
- * @param {LeaveApplication[] | undefined} props.leaves - The list of leave applications.
- * @param {boolean} props.isLoading - Indicates if the leave data is currently loading.
- * @param {string[]} props.managerNames - List of manager names corresponding to the leave applications.
- * @param {(leave: LeaveApplication) => void} props.onEditLeave - Callback function to handle editing a leave application.
- *
- * @returns {JSX.Element} The rendered LeaveHistory component.
- *
- *
- * @function handleCancelLeave
- * @param {LeaveApplication} leave - The leave application to cancel.
- * Handles the logic for canceling a leave application and restoring leave balance.
- *
- * @function canPerformActions
- * @param {LeaveApplication} leave - The leave application to check.
- * @returns {boolean} True if actions can be performed on the leave, false otherwise.
- */
-
 interface LeaveHistoryProps {
   leaves: LeaveApplication[] | undefined;
   isLoading: boolean;
   managerNames: string[];
   onEditLeave: (leave: LeaveApplication) => void;
 }
-
+/**
+* @description 
+*  LeaveHistory component for displaying a user's leave applications.
+* This component shows a table of leave applications with options to filter by leave type and status.
+* It allows users to edit or cancel their leave requests based on their current status.
+* @param {LeaveHistoryProps} {
+  leaves,
+  isLoading,
+  managerNames,
+  onEditLeave,
+}
+* @returns {JSX.Element}
+*/
 const LeaveHistory: React.FC<LeaveHistoryProps> = ({
   leaves,
   isLoading,
@@ -51,7 +39,11 @@ const LeaveHistory: React.FC<LeaveHistoryProps> = ({
   const queryClient = useQueryClient();
   const [filterType, setFilterType] = useState<string>("All");
   const [filterStatus, setFilterStatus] = useState<string>("All");
-
+  /**
+   * @description Get the status class for a particular status
+   * @param {string} status
+   * @returns {string}
+   */
   const getStatusClass = (status: string) => {
     switch (status.toLowerCase()) {
       case "pending":
@@ -66,7 +58,6 @@ const LeaveHistory: React.FC<LeaveHistoryProps> = ({
         return "";
     }
   };
-
   //to get filtered leaves
   const filteredLeaves = useMemo(() => {
     if (!leaves) return [];
@@ -77,44 +68,42 @@ const LeaveHistory: React.FC<LeaveHistoryProps> = ({
       return matchesType && matchesStatus;
     });
   }, [leaves, filterType, filterStatus]);
-
   //to cancel a leave
+  /**
+   * @description function to cancel a leave
+   * @param {LeaveApplication} leave
+   * @returns {void}
+   */
   const handleCancelLeave = async (leave: LeaveApplication) => {
     if (!["pending", "approved"].includes(leave.status)) {
       toast.error("Only pending or approved leave requests can be cancelled.");
       return;
     }
-
     if (leave.status === "approved" && isPast(new Date(leave.startDate))) {
       toast.error("Cannot cancel a leave that has already started.");
       return;
     }
-
     try {
       let updatedLeaveBalance = auth.leaveBalance;
       let updatedUnpaid = auth.unpaidLeaves;
-
       if (leave.status === "approved" || leave.status === "pending") {
         const allDays = eachDayOfInterval({
           start: new Date(leave.startDate),
           end: new Date(leave.endDate),
         });
         const days = allDays.filter((d) => !isWeekend(d)).length;
-
         if (leave.type === "paid") {
           updatedLeaveBalance += days;
         } else {
           updatedUnpaid = Math.max(0, updatedUnpaid - days);
         }
       }
-
       const result = await combinedOperations.cancelLeaveAndRestoreBalance(
         leave.id,
         auth.id,
         updatedLeaveBalance,
         updatedUnpaid
       );
-
       dispatch(
         setUser({
           ...auth,
@@ -122,7 +111,6 @@ const LeaveHistory: React.FC<LeaveHistoryProps> = ({
           unpaidLeaves: result.user.unpaidLeaves as number,
         })
       );
-
       // Invalidate queries to refresh data
       await queryClient.invalidateQueries({ queryKey: ["leave-applications"] });
       toast.success("Leave request cancelled successfully!");
@@ -133,6 +121,12 @@ const LeaveHistory: React.FC<LeaveHistoryProps> = ({
   };
   //utility function to know whether to enable or disable actions
   //disabled edit/cancel if leave already starts
+  /**
+   * @description utility function to know whether to enable or disable actions
+   * disabled edit/cancel if leave already starts
+   * @param {LeaveApplication} leave
+   * @returns {boolean}
+   */
   const canPerformActions = (leave: LeaveApplication) => {
     if (leave.status === "pending") {
       return true;
@@ -141,7 +135,6 @@ const LeaveHistory: React.FC<LeaveHistoryProps> = ({
     }
     return false;
   };
-
   return (
     <div className="leave-history-section">
       <div className="filter-container">
@@ -272,5 +265,4 @@ const LeaveHistory: React.FC<LeaveHistoryProps> = ({
     </div>
   );
 };
-
 export default LeaveHistory;

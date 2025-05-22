@@ -6,28 +6,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { useQuery } from "@tanstack/react-query";
 import { userApi } from "../../api/apiCalls";
-
-/**
- * LeaveBalanceChart component for displaying the user's leave balance using a donut chart.
- *
- * This component fetches the user's leave data and visualizes the consumed and available leave balances
- * for paid and unpaid leaves. It uses the AgCharts library to render the chart.
- *
- * @returns {JSX.Element} The rendered LeaveBalanceChart component.
- *
- * @typedef {Object} LeaveData
- * @property {string} type - The type of leave (e.g., "Paid Leaves", "Unpaid Leaves").
- * @property {number} consumed - The amount of leave consumed.
- * @property {number | string} available - The amount of leave available (can be a number or "∞" for unpaid leaves).
- * @property {number | string} total - The total amount of leave (can be a number or "∞" for unpaid leaves).
- *
- * @function handleFetchUser Data
- * Fetches user data from the API to retrieve leave balance information.
- *
- * @function getChartOptions
- * Generates the chart options for the AgCharts donut chart.
- * @returns {AgChartOptions} The options for the chart.
- */
+import { LEAVE_BALANCE } from "../../constants";
 
 interface LeaveData {
   type: string;
@@ -35,14 +14,19 @@ interface LeaveData {
   available: number | string;
   total: number | string;
 }
-
+/**
+ * @description
+ *  LeaveBalanceChart component for displaying the user's leave balance using a donut chart.
+ *
+ * This component fetches the user's leave data and visualizes the consumed and available leave balances
+ * for paid and unpaid leaves. It uses the AgCharts library to render the chart.
+ * @returns {JSX.Element}
+ */
 const LeaveBalanceChart: React.FC = () => {
   const userId = useSelector((state: RootState) => state.auth.id);
-
-  useEffect(()=>{
-      document.title="Leave Balance"
-    },[])
-
+  useEffect(() => {
+    document.title = "Leave Balance";
+  }, []);
   const {
     data: userData,
     isLoading,
@@ -64,18 +48,18 @@ const LeaveBalanceChart: React.FC = () => {
       </div>
     );
   }
-
   const paidLeavesConsumed =
-    userData?.leaveBalance !== undefined ? 20 - userData.leaveBalance : 0;
+    userData?.leaveBalance !== undefined
+      ? LEAVE_BALANCE - userData.leaveBalance
+      : 0;
   const unpaidLeavesConsumed =
     userData?.unpaidLeaves !== undefined ? userData.unpaidLeaves : 0;
-
   const leaveData: LeaveData[] = [
     {
       type: "Paid Leaves",
       consumed: paidLeavesConsumed,
       available: userData?.leaveBalance ?? 0,
-      total: 20,
+      total: LEAVE_BALANCE,
     },
     {
       type: "Unpaid Leaves",
@@ -84,12 +68,10 @@ const LeaveBalanceChart: React.FC = () => {
       total: "∞",
     },
   ];
-
   const chartData = [
     { category: "Paid Leaves Used", value: paidLeavesConsumed },
     { category: "Unpaid Leaves Used", value: unpaidLeavesConsumed },
   ];
-
   const chartOptions: AgChartOptions = {
     data: chartData,
     title: {
@@ -115,7 +97,6 @@ const LeaveBalanceChart: React.FC = () => {
       position: "bottom",
     },
   };
-
   return (
     <div className="leave-container">
       <div className="chart-and-stats-container">
@@ -167,5 +148,4 @@ const LeaveBalanceChart: React.FC = () => {
     </div>
   );
 };
-
 export default LeaveBalanceChart;

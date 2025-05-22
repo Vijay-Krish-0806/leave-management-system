@@ -28,14 +28,14 @@ const CommonTabs: React.FC<CommonTabsProps> = ({ additionalTabs }) => {
         to="leave-balance"
         className={({ isActive }) => `tab ${isActive ? "active" : ""}`}
       >
-        <FaChartPie/>
+        <FaChartPie />
         Attendance
       </NavLink>
       <NavLink
         to="apply-leave"
         className={({ isActive }) => `tab ${isActive ? "active" : ""}`}
       >
-        <FaSignOutAlt/>
+        <FaSignOutAlt />
         Apply Leave
       </NavLink>
       {additionalTabs}
