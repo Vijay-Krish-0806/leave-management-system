@@ -2,13 +2,15 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
-import { FaCheck, FaSpinner } from "react-icons/fa";
+import { FaCheck } from "react-icons/fa";
 import { eachDayOfInterval, format, isWeekend } from "date-fns";
 import { FaX } from "react-icons/fa6";
 import { toast } from "react-toastify";
 import { LeaveApplication, User } from "../../types";
 import { leaveApi, userApi } from "../../api/apiCalls";
+import Table, { Column } from "../CommonTable";
 import "../css/Table.css";
+
 /**
  * @description Use to show active leaves of a team members to manager for approval or reject
  * @returns {JSX.Element}
@@ -16,6 +18,7 @@ import "../css/Table.css";
 const ViewActiveLeaves: React.FC = () => {
   const auth = useSelector((state: RootState) => state.auth);
   const queryClient = useQueryClient();
+
   const {
     data: activeLeaves,
     isLoading,
@@ -31,9 +34,11 @@ const ViewActiveLeaves: React.FC = () => {
       );
     },
   });
+
   useEffect(() => {
     document.title = "Active Leaves";
   }, []);
+
   const approveRejectMutation = useMutation({
     mutationFn: (leave: LeaveApplication) => leaveApi.update(leave.id, leave),
     onSuccess: () => {
@@ -44,6 +49,7 @@ const ViewActiveLeaves: React.FC = () => {
       console.error("Mutation error:", error);
     },
   });
+
   //to update the user on approval
   const updateUserMutation = useMutation({
     mutationFn: (userData: User) =>
@@ -56,12 +62,13 @@ const ViewActiveLeaves: React.FC = () => {
       console.error("User update error:", error);
     },
   });
+
   /**
    * @description to handle approval of leave
    * @param {LeaveApplication} leave
    * @returns {void}
    */
-  const handleApprove = (leave: LeaveApplication) => {
+  const handleApprove = (leave: LeaveApplication): void => {
     approveRejectMutation.mutate(
       { ...leave, status: "approved", approvedBy: auth.id },
       {
@@ -73,7 +80,7 @@ const ViewActiveLeaves: React.FC = () => {
       }
     );
   };
-  //to handle reject and update the user leave balance
+
   /**
    * @description to handle reject and update the user leave balance
    * @param {LeaveApplication} leave
@@ -86,12 +93,14 @@ const ViewActiveLeaves: React.FC = () => {
         status: "rejected",
         approvedBy: auth.id,
       });
+
       const userData = await userApi.getById(leave.employeeId);
       const allDays = eachDayOfInterval({
         start: new Date(leave.startDate),
         end: new Date(leave.endDate),
       });
       const workingDays = allDays.filter((d) => !isWeekend(d)).length;
+
       if (leave.type === "paid") {
         userData.leaveBalance += workingDays;
       } else if (leave.type === "unpaid") {
@@ -100,6 +109,7 @@ const ViewActiveLeaves: React.FC = () => {
           (userData.unpaidLeaves || 0) - workingDays
         );
       }
+
       // Update user with new balance
       await updateUserMutation.mutateAsync(userData);
       toast.error(`Leave request for ${leave.requestedBy} has been rejected`);
@@ -108,109 +118,90 @@ const ViewActiveLeaves: React.FC = () => {
       toast.error("Failed to complete the rejection process");
     }
   };
-  if (isLoading) {
-    return (
-      <div className="loading-spinner">
-        <FaSpinner className="spin" />
-        <span>Loading leave requests...</span>
-      </div>
-    );
-  }
-  if (isError) {
-    return (
-      <div className="error-message">
-        <p>Error loading leave requests. Please try again later.</p>
-        <p>{(error as Error)?.message}</p>
-      </div>
-    );
-  }
+
+  // Define table columns
+  const columns: Column<LeaveApplication>[] = [
+    {
+      header: "Username",
+      accessor: "requestedBy",
+    },
+    {
+      header: "Leave Period",
+      accessor: (leave) => (
+        <>
+          {format(new Date(leave.startDate), "PPP")} -{" "}
+          {format(new Date(leave.endDate), "PPP")}
+        </>
+      ),
+    },
+    {
+      header: "Working Days",
+      accessor: (leave) => {
+        const allDays = eachDayOfInterval({
+          start: new Date(leave.startDate),
+          end: new Date(leave.endDate),
+        });
+        const workingDays = allDays.filter((d) => !isWeekend(d)).length;
+        return `${workingDays} working days`;
+      },
+    },
+    {
+      header: "Leave Type",
+      accessor: "type",
+    },
+    {
+      header: "Reason",
+      accessor: "reason",
+    },
+    {
+      header: "Actions",
+      accessor: (leave) => (
+        <>
+          <button
+            className="approve-button"
+            title="Approve Leave Request"
+            onClick={() => handleApprove(leave)}
+          >
+            (
+            <>
+              Approve
+              <FaCheck />
+            </>
+            )
+          </button>
+          <button
+            className="reject-button"
+            title="Reject Leave Request"
+            onClick={() => handleReject(leave)}
+          >
+            (
+            <>
+              Reject
+              <FaX />
+            </>
+            )
+          </button>
+        </>
+      ),
+    },
+  ];
+
   return (
-    <div className="table-container">
-      <table className="custom-table">
-        <caption className="table-caption">Pending Leave Requests</caption>
-        <thead className="table-header">
-          <tr>
-            <th>Index</th>
-            <th>Username</th>
-            <th>Leave Period</th>
-            <th>Working Days</th>
-            <th>Leave Type</th>
-            <th>Reason</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody className="table-body">
-          {activeLeaves && activeLeaves.length > 0 ? (
-            activeLeaves.map((leave, index) => {
-              const allDays = eachDayOfInterval({
-                start: new Date(leave.startDate),
-                end: new Date(leave.endDate),
-              });
-              const workingDays = allDays.filter((d) => !isWeekend(d)).length;
-              return (
-                <tr key={leave.id}>
-                  <td>{index + 1}</td>
-                  <td>{leave.requestedBy}</td>
-                  <td>
-                    {format(new Date(leave.startDate), "PPP")} -{" "}
-                    {format(new Date(leave.endDate), "PPP")}
-                  </td>
-                  <td>{workingDays} working days</td>
-                  <td>{leave.type}</td>
-                  <td>{leave.reason}</td>
-                  <td>
-                    <button
-                      className="approve-button"
-                      title="Approve Leave Request"
-                      onClick={() => handleApprove(leave)}
-                      disabled={
-                        approveRejectMutation.isPending ||
-                        updateUserMutation.isPending
-                      }
-                    >
-                      {approveRejectMutation.isPending ||
-                      updateUserMutation.isPending ? (
-                        <FaSpinner className="spin" />
-                      ) : (
-                        <>
-                          Approve
-                          <FaCheck />
-                        </>
-                      )}
-                    </button>
-                    <button
-                      className="reject-button"
-                      title="Reject Leave Request"
-                      onClick={() => handleReject(leave)}
-                      disabled={
-                        approveRejectMutation.isPending ||
-                        updateUserMutation.isPending
-                      }
-                    >
-                      {approveRejectMutation.isPending ||
-                      updateUserMutation.isPending ? (
-                        <FaSpinner className="spin" />
-                      ) : (
-                        <>
-                          Reject
-                          <FaX />
-                        </>
-                      )}
-                    </button>
-                  </td>
-                </tr>
-              );
-            })
-          ) : (
-            <tr>
-              <td className="no-leave-message" colSpan={8}>
-                No active leaves
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-    </div>
+    <Table
+      columns={columns}
+      data={activeLeaves || []}
+      caption="Pending Leave Requests"
+      isLoading={isLoading}
+      isError={isError}
+      errorMessage={
+        isError
+          ? `Error loading leave requests. ${
+              (error as Error)?.message || "Please try again later."
+            }`
+          : undefined
+      }
+    />
   );
 };
+
 export default ViewActiveLeaves;

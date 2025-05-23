@@ -18,8 +18,8 @@ import { LeaveApplication } from "../../types";
 import LeaveHistory from "./LeaveHistory";
 import { HOLIDAYS, LEAVE_BALANCE } from "../../constants";
 import { combinedOperations, leaveApi, userApi } from "../../api/apiCalls";
-import "../css/ApplyLeave.css";
 import { FaPlus } from "react-icons/fa6";
+import "../css/ApplyLeave.css";
 
 /**
  * @description LeaveManagement component for handling leave applications.
