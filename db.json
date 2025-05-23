@@ -1,0 +1,140 @@
+{
+  "users": [
+    {
+      "id": "2183",
+      "username": "Shyam",
+      "email": "shyam@pal.tech",
+      "password": "welcome",
+      "role": "manager",
+      "gender": "male",
+      "managerId": "2183",
+      "leaveBalance": 20,
+      "unpaidLeaves": 0,
+      "department": "CEO"
+    },
+    {
+      "id": "2184",
+      "username": "Santosh",
+      "email": "santosh@pal.tech",
+      "password": "welcome",
+      "role": "HR",
+      "gender": "male",
+      "managerId": "2183",
+      "department": "HR",
+      "leaveBalance": 20,
+      "unpaidLeaves": 0
+    },
+    {
+      "id": "2185",
+      "username": "Dharani",
+      "email": "dharani@pal.tech",
+      "password": "welcome",
+      "role": "HR",
+      "gender": "female",
+      "managerId": "db90",
+      "department": "HR",
+      "leaveBalance": 19,
+      "unpaidLeaves": 12
+    },
+    {
+      "id": "2155",
+      "username": "Vinay Chintapally",
+      "email": "vinay@pal.tech",
+      "password": "welcome",
+      "role": "manager",
+      "gender": "male",
+      "department": "Project Management",
+      "managerId": "2183",
+      "leaveBalance": 20,
+      "unpaidLeaves": 0
+    },
+    {
+      "username": "Vijay Inampudi",
+      "email": "vijay@pal.tech",
+      "password": "welcome",
+      "role": "employee",
+      "gender": "male",
+      "department": "Python",
+      "managerId": "7ad6",
+      "leaveBalance": 15,
+      "unpaidLeaves": 0,
+      "id": "d9a9"
+    },
+    {
+      "username": "Krishna Inampudi",
+      "email": "krishna@pal.tech",
+      "password": "welcome",
+      "role": "employee",
+      "gender": "male",
+      "department": "Java",
+      "managerId": "7ad6",
+      "leaveBalance": 20,
+      "unpaidLeaves": 0,
+      "id": "bb3b"
+    },
+    {
+      "id": "85da",
+      "username": "Dummy User",
+      "email": "dummy@pal.tech",
+      "password": "welcome",
+      "role": "employee",
+      "gender": "male",
+      "department": "Data",
+      "managerId": "",
+      "leaveBalance": 20,
+      "unpaidLeaves": 0
+    },
+    {
+      "id": "db90",
+      "username": "Spandana Deepati",
+      "email": "spandana@pal.tech",
+      "password": "welcome",
+      "role": "HR",
+      "gender": "female",
+      "department": "Human Resources",
+      "managerId": "2184",
+      "leaveBalance": 20,
+      "unpaidLeaves": 0
+    },
+    {
+      "username": "Sreekar Sudireddy",
+      "email": "sreekar@pal.tech",
+      "password": "welcome",
+      "role": "manager",
+      "gender": "male",
+      "department": "Project Management",
+      "managerId": "2183",
+      "leaveBalance": 20,
+      "unpaidLeaves": 0,
+      "id": "7ad6"
+    }
+  ],
+  "leaveApplications": [
+    {
+      "id": "1748002892490",
+      "employeeId": "d9a9",
+      "startDate": "2025-05-22T18:30:00.000Z",
+      "endDate": "2025-05-22T18:30:00.000Z",
+      "type": "unpaid",
+      "status": "rejected",
+      "requestedBy": "Vijay Inampudi (vijay@pal.tech)",
+      "approvedBy": "7ad6",
+      "currentManager": "7ad6",
+      "reason": "Sick",
+      "createdAt": "2025-05-23T12:21:32.490Z"
+    },
+    {
+      "id": "1748002917088",
+      "employeeId": "d9a9",
+      "startDate": "2025-05-25T18:30:00.000Z",
+      "endDate": "2025-05-29T18:30:00.000Z",
+      "type": "paid",
+      "status": "approved",
+      "requestedBy": "Vijay Inampudi (vijay@pal.tech)",
+      "approvedBy": "7ad6",
+      "currentManager": "7ad6",
+      "reason": "Sick",
+      "createdAt": "2025-05-23T12:21:57.088Z"
+    }
+  ]
+}

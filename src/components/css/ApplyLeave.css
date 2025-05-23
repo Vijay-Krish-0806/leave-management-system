@@ -1,0 +1,661 @@
+:root {
+  --primary-color: #4a6fa5;
+  --primary-dark: #345888;
+  --secondary-color: #f8f9fa;
+  --border-color: #dde1e5;
+  --error-color: #d9534f;
+  --success-color: #5cb85c;
+  --warning-color: #f0ad4e;
+  --info-color: #5bc0de;
+  --text-color: #343a40;
+  --light-text: #6c757d;
+  --hover-bg: #f2f7ff;
+  --shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  --hover-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+  --border-radius: 6px;
+}
+
+.leave-management-container {
+  max-width: 100vw;
+  margin: 0 auto;
+  padding: 15px 16px;
+}
+
+.top-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.request-leave-button {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(74, 111, 165, 0.25);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.request-leave-button:hover {
+  background-color: var(--primary-dark);
+  box-shadow: 0 4px 8px rgba(74, 111, 165, 0.35);
+}
+
+.content-container {
+  display: flex;
+  gap: 25px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.calendar-container,
+.leave-history-section {
+  background: #fff;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  padding: 25px;
+}
+
+.calendar-container:hover,
+.leave-history-section:hover {
+  box-shadow: var(--hover-shadow);
+}
+
+.calendar-container {
+  flex: 1;
+  border-left: 4px solid var(--info-color);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 28px;
+  max-height: 420px;
+}
+
+.calendar-heading {
+  margin: 0;
+  color: var(--primary-color);
+}
+
+.leave-history-section {
+  border-left: 4px solid var(--warning-color);
+  overflow-x: auto;
+}
+
+.calendar-legend {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 5px;
+  justify-content: center;
+}
+
+.calendar-legend .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.calendar-legend .legend-color {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.07);
+}
+
+.calendar-legend .legend-holiday .legend-color {
+  background-color: #ffe0e6;
+}
+
+.calendar-legend .legend-leave .legend-color {
+  background-color: #6adaff;
+}
+
+/* Popup Styles */
+.leave-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.leave-popup-content {
+  background-color: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  border-left: 4px solid var(--primary-dark);
+  user-select: none;
+
+}
+
+.leave-application {
+  padding: 10px 28px;
+  position: relative;
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 10px;
+  margin-bottom: 20px;
+}
+
+.popup-header h2 {
+  margin: 0;
+  color: var(--primary-dark);
+}
+
+.close-popup-button {
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: var(--light-text);
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+}
+
+.close-popup-button:hover {
+  background-color: var(--hover-bg);
+  color: var(--text-color);
+}
+
+/* Form styles */
+.form-group {
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-color);
+  letter-spacing: 0.02em;
+}
+
+/* Common input styles */
+.input-container input,
+.date-picker-input,
+.select-container select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: #fcfdfe;
+  color: var(--text-color);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.input-container input:focus,
+.date-picker-input:focus,
+.select-container select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.15);
+  background-color: #fff;
+}
+
+.select-container {
+  position: relative;
+  width: 97%;
+}
+
+.select-container select {
+  appearance: none;
+  padding-right: 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%234a6fa5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  cursor: pointer;
+}
+
+.date-picker-container {
+  position: relative;
+}
+
+.error-message {
+  color: var(--error-color);
+  font-size: 12px;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+}
+
+.error-message::before {
+  content: "!";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background-color: var(--error-color);
+  color: white;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.leave-summary {
+  background: #eaf6ff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(74, 111, 165, 0.1);
+  padding: 10px 10px 10px;
+  margin-bottom: 20px;
+  border-left: 4px solid var(--primary-color);
+  user-select: none;
+}
+
+.leave-summary h3 {
+  margin: 0 0 18px;
+  color: var(--primary-dark);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.leave-details {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.leave-detail {
+  display: flex;
+  flex-direction: column;
+  min-width: 120px;
+  margin-bottom: 8px;
+}
+
+.leave-detail .detail-label {
+  color: var(--light-text);
+  margin-bottom: 3px;
+}
+
+.leave-detail .detail-value {
+  color: var(--primary-dark);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.leave-detail.total-days .detail-value {
+  color: #1d8348;
+  font-weight: bold;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.submit-button,
+.cancel-edit-button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+}
+
+.submit-button {
+  background-color: var(--primary-color);
+  color: white;
+  flex-grow: 1;
+  box-shadow: 0 2px 4px rgba(74, 111, 165, 0.25);
+}
+
+.submit-button:hover {
+  background-color: var(--primary-dark);
+}
+
+.cancel-edit-button {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+  border: 1.5px solid var(--border-color);
+}
+
+.cancel-edit-button:hover {
+  background-color: #e9ecef;
+}
+
+.leave-history-section {
+  flex: 2;
+  margin-top: 0;
+  color: var(--primary-color);
+  font-size: 1rem;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--border-color);
+  user-select: none;
+}
+
+.filter-container {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.filter-container span {
+  font-size: 1.3rem;
+}
+.filters {
+  display: flex;
+  gap: 20px;
+}
+
+.filters select {
+  appearance: none;
+  padding-right: 20px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%234a6fa5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 9px center;
+  background-size: 16px;
+  cursor: pointer;
+}
+
+.loading {
+  padding: 40px 0;
+  text-align: center;
+  color: var(--light-text);
+}
+.leaves-container {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem;
+}
+
+.leaves-container th {
+  background-color: var(--secondary-color);
+  text-align: left;
+  padding: 12px;
+  font-weight: 600;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.leaves-container td {
+  padding: 12px;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: top;
+}
+
+.leaves-container tr:hover {
+  background-color: var(--hover-bg);
+}
+
+.date-range {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.working-days {
+  font-size: 14px;
+  color: var(--light-text);
+}
+
+.leave-type {
+  text-transform: capitalize;
+}
+
+.leave-status {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.leave-status-pending {
+  background-color: rgba(240, 173, 78, 0.2);
+  color: #b07b30;
+}
+
+.leave-status-approved {
+  background-color: rgba(92, 184, 92, 0.2);
+  color: #3d8b3d;
+}
+
+.leave-status-rejected {
+  background-color: rgba(217, 83, 79, 0.2);
+  color: #a94442;
+}
+
+.leave-status-cancelled {
+  background-color: rgba(108, 117, 125, 0.2);
+  color: #495057;
+}
+
+.approved-by-label {
+  display: block;
+  color: var(--light-text);
+  margin-bottom: 4px;
+}
+
+.manager-name {
+  font-weight: 500;
+}
+
+.buttons-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.leave-edit-button,
+.leave-cancel-button {
+  font-size: 12px;
+  width: 100%;
+  text-align: center;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+}
+
+.leave-edit-button {
+  background-color: var(--info-color);
+}
+
+.leave-edit-button:hover {
+  background-color: #46b8da;
+}
+
+.leave-cancel-button {
+  background-color: var(--warning-color);
+}
+
+.leave-cancel-button:hover {
+  background-color: #ec971f;
+}
+
+.disabled-btn {
+  padding: 5px 10px;
+  background-color: #e9ecef;
+  color: #adb5bd;
+  border: none;
+  border-radius: 4px;
+  cursor: not-allowed;
+  font-size: 12px;
+}
+
+.no-leaves-message {
+  text-align: center;
+  color: var(--light-text);
+  padding: 30px 0;
+}
+
+@media (max-width: 768px) {
+  .content-container {
+    flex-direction: column;
+  }
+  .calendar-container,
+  .leave-history-section {
+    width: 100%;
+    margin: 0;
+  }
+
+  .leave-popup-content {
+    width: 95%;
+    max-height: 95vh;
+  }
+}
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
+.react-datepicker {
+  font-size: 0.9rem ;
+  border: 1px solid var(--primary-dark) ;
+  border-radius: 12px ;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) ;
+  width: 100% ;
+  max-width: 300px ;
+  padding: 10px ;
+  position: relative;
+}
+
+.react-datepicker__header {
+  background-color: var(--primary-color) ;
+  border-radius: 8px ;
+  padding: 16px 0 ;
+}
+.react-datepicker__close-icon {
+  position: absolute;
+  right: 3%;
+}
+
+.react-datepicker__current-month {
+  color: white ;
+  font-weight: 600 ;
+  font-size: 1rem ;
+  margin-bottom: 8px ;
+}
+
+.react-datepicker__day-names {
+  margin-top: 10px ;
+  display: flex ;
+  justify-content: space-around ;
+  padding: 0 8px ;
+}
+
+.react-datepicker__day-name {
+  color: rgba(255, 255, 255, 0.9) ;
+  width: 36px ;
+  height: 36px ;
+  line-height: 36px ;
+  font-weight: 500 ;
+  margin: 0 ;
+  font-size: 0.8rem ;
+}
+
+.react-datepicker__month {
+  padding: 6px ;
+}
+
+.react-datepicker__day {
+  width: 36px ;
+  height: 36px ;
+  line-height: 36px ;
+  margin: 2px ;
+  border-radius: 50% ;
+  color: #333 ;
+  font-weight: 500 ;
+}
+
+.react-datepicker__day--selected {
+  background-color: var(--primary-color) ;
+  color: white ;
+  border-radius: 50% ;
+  font-weight: 600 ;
+}
+
+.react-datepicker__day--selected:hover,
+.react-datepicker__day--keyboard-selected:hover {
+  background-color: var(--primary-color) ;
+  color: white ;
+  opacity: 0.9;
+}
+
+.react-datepicker__day--weekend {
+  color: var(--light-text) ;
+}
+
+.react-datepicker__day--disabled {
+  color: #ccc ;
+  cursor: default ;
+  opacity: 0.6;
+}
+
+.react-datepicker__navigation {
+  top: 18px ;
+  border: none ;
+  background: none ;
+}
+
+.react-datepicker__navigation--previous {
+  left: 15px ;
+}
+
+.react-datepicker__navigation--next {
+  right: 15px ;
+}
+
+.react-datepicker__navigation-icon::before {
+  border-color: white ;
+  border-width: 2px 2px 0 0 ;
+  width: 8px ;
+  height: 8px ;
+}
+
+.react-datepicker__month-container {
+  width: 100% ;
+}
+
+.react-datepicker__day--highlighted-holiday {
+  background-color: #ffe0e6;
+}
+.react-datepicker__day--highlighted-leave {
+  background-color: #6adaff;
+}
+
+@media (max-width: 900px) {
+  .leave-management-container {
+    grid-template-areas:
+      "leave-application"
+      "calendar-container"
+      "leave-history";
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 12px 4px;
+  }
+
+  .leave-application,
+  .calendar-container {
+    padding: 20px 10px;
+  }
+}

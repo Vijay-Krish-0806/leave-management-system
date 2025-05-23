@@ -1,0 +1,159 @@
+.login-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.left-side {
+  flex: 1;
+  background: #0146a7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: clamp(3rem, 6vw, 6rem);
+  font-weight: bold;
+  color: #fff;
+  user-select: none;
+}
+
+.text-color {
+  color: #e3a004;
+}
+
+.right-side {
+  flex: 1;
+  background: #eea908;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.form-wrapper {
+  background: white;
+  padding: clamp(20px, 5vw, 40px);
+  border-radius: 12px;
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+}
+
+h1 {
+  margin-bottom: 28px;
+  color: #036bfc;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.input-container {
+  margin-bottom: 20px;
+  width: 100%;
+  position: relative;
+}
+
+label {
+  display: block;
+  margin-bottom: 7px;
+  font-weight: 500;
+  color: #222;
+}
+
+.input-field {
+  width: 100%;
+  padding: 11px 40px 11px 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.input-field:focus {
+  border-color: #036bfc;
+  outline: none;
+}
+
+.password-icon {
+  position: absolute;
+  right: 8px;
+  top: 40px;
+  cursor: pointer;
+  color: #666;
+  transition: color 0.2s;
+}
+
+.password-icon:hover {
+  color: #000;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 12px;
+  background: #036bfc;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap:10px
+}
+
+.submit-btn:hover {
+  background: #024da1;
+}
+
+.submit-btn:active {
+  transform: translateY(1px);
+}
+
+.error-msg {
+  color: #d8000c;
+  background: #ffd2d2;
+  border: 1px solid #d8000c;
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin-bottom: 18px;
+  width: 100%;
+  text-align: center;
+  font-weight: 500;
+}
+@media screen and (max-width: 1024px) {
+  .left-side {
+    font-size: 4rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .login-container {
+    flex-direction: column;
+  }
+
+  .left-side {
+    display: none;
+  }
+
+  .right-side {
+    flex: 1;
+    min-height: 100vh;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .form-wrapper {
+    padding: 20px 15px;
+  }
+
+  h1 {
+    font-size: 1.3rem;
+  }
+
+  .submit-btn {
+    font-size: 1rem;
+  }
+}
