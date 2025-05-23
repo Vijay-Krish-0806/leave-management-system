@@ -17,7 +17,7 @@ interface Props {
  *
  * This component allows users to search for and select a manager from a list of users.
  * It displays the selected user's name and provides a search input to filter the options.
-* @param {Props} {
+* @param {Props} { 
   usersList,
   initialUser,
   placeholder = "Select Managers",
