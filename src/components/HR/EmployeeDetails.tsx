@@ -16,7 +16,6 @@ import { userApi } from "../../api/apiCalls";
 /**
  * @description
  * EmployeeDetails component for displaying detailed information about an employee.
- *
  * This component fetches and displays user data, including personal information,
  * role, department, and leave history. It also shows the manager's name and allows
  * navigation back to the previous page.
@@ -25,11 +24,16 @@ import { userApi } from "../../api/apiCalls";
 const EmployeeDetails = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.title = "Employee details";
+  }, []);
+
   /**
    * @description to get all leave data with particular employee ID
-   * @returns {User[]}
+   * @returns {Promise<LeaveApplication[]>}
    */
-  const getAllLeaves = async () => {
+  const getAllLeaves = async (): Promise<LeaveApplication[]> => {
     const response = await axios.get(
       `http://localhost:3001/leaveApplications/?employeeId=${userId}`
     );
@@ -44,9 +48,7 @@ const EmployeeDetails = () => {
     queryKey: ["users", userId],
     queryFn: () => userApi.getById(userId as string),
   });
-  useEffect(() => {
-    document.title = "Employee details";
-  }, []);
+
   const {
     data: userLeaves,
     isLoading: isLeavesLoading,
@@ -55,12 +57,11 @@ const EmployeeDetails = () => {
     queryKey: ["employee-leaves"],
     queryFn: getAllLeaves,
   });
-  //to get the manager name based on manager ID
   /**
    * @description to get the manager name based on manager ID
-   * @returns {void}
+   * @returns {Promise<void>}
    */
-  const getManagerName = async () => {
+  const getManagerName = async () :Promise<void>=> {
     if (userData && userData.managerId) {
       try {
         const res = await axios.get(
@@ -77,12 +78,11 @@ const EmployeeDetails = () => {
       getManagerName();
     }
   }, [userData]);
-  //when go back is clicked to navigate to previous page
   /**
    * @description when go back is clicked to navigate to previous page
    * @returns {void}
    */
-  const handleNavigate = () => {
+  const handleNavigate = ():void => {
     navigate(-1);
   };
   if (isLoading) return <div className="loading">Loading user data...</div>;

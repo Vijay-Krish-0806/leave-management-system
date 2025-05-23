@@ -17,14 +17,17 @@ const ViewLeaveHistory = () => {
   const auth = useSelector((state: RootState) => state.auth);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filterStatus, setFilterStatus] = useState<string>("All");
+
   const { data: activeLeaves } = useQuery({
     queryKey: ["leave-applications"],
     queryFn: leaveApi.getAll,
     select: (data) => data.filter((leave) => leave.currentManager === auth.id),
   });
+
   useEffect(() => {
     document.title = "Show Leaves";
   }, []);
+
   const filteredLeaves = useMemo(() => {
     if (!activeLeaves) return [];
     return activeLeaves.filter((leave) => {
@@ -36,6 +39,7 @@ const ViewLeaveHistory = () => {
       return matchesUser && matchesStatus;
     });
   }, [activeLeaves, searchTerm, filterStatus]);
+
   const columns: Column<LeaveApplication>[] = [
     { header: "Username", accessor: "requestedBy" },
     {
@@ -55,6 +59,7 @@ const ViewLeaveHistory = () => {
     },
     { header: "Status", accessor: "status" },
   ];
+
   return (
     <>
       <div className="table-controls">

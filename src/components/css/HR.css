@@ -54,7 +54,6 @@
   transform: scale(1.2);
 }
 
-/* Form body */
 .employee-form {
   padding: 15px;
 }
@@ -83,9 +82,9 @@
   color: #4b5563;
 }
 
-.form-group label::after{
-  content:"*";
-  color:red
+.form-group label::after {
+  content: "*";
+  color: red;
 }
 
 .input-icon {
@@ -93,7 +92,6 @@
   color: #6366f1;
 }
 
-/* Form controls */
 input[type="text"],
 input[type="email"],
 input[type="password"],
@@ -107,8 +105,6 @@ select {
   background-color: #f9fafb;
 }
 
-
-
 input:focus,
 select:focus {
   outline: none;
@@ -117,10 +113,9 @@ select:focus {
 }
 
 select {
- width: 100%;
+  width: 100%;
 }
 
-/* Gender radio buttons */
 .gender-group {
   margin-bottom: 0;
 }
@@ -151,8 +146,6 @@ select {
   border-color: #6366f1;
 }
 
-
-
 .radio-option input[type="radio"]:checked::after {
   content: "";
   position: absolute;
@@ -170,11 +163,10 @@ select {
   margin-bottom: 0;
 }
 
-.radio-option label::after{
-  content:""
+.radio-option label::after {
+  content: "";
 }
 
-/* Form actions */
 .form-actions {
   display: flex;
   justify-content: flex-end;
@@ -202,13 +194,13 @@ select {
 }
 
 .submit-button {
-  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  background: linear-gradient(#4f46e5, #6366f1);
   color: white;
   border: none;
 }
 
 .submit-button:hover:not(:disabled) {
-  background: linear-gradient(135deg, #4338ca, #4f46e5);
+  background: linear-gradient(#4338ca, #4f46e5);
   box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
 }
 
@@ -229,7 +221,6 @@ select {
   border-color: #9ca3af;
 }
 
-/* Modal overlay styling */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -243,31 +234,30 @@ select {
   align-items: center;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .form-row {
     flex-direction: column;
     gap: 16px;
   }
-  
+
   .form-group {
     width: 100%;
   }
-  
+
   .employee-form-container {
     margin: 10px;
     width: calc(100% - 20px);
     max-width: none;
   }
-  
+
   .employee-form {
     padding: 20px;
   }
-  
+
   .form-header {
     padding: 16px 20px;
   }
-  
+
   .modal-overlay .employee-form-container {
     width: 95%;
     max-height: 85vh;

@@ -86,7 +86,7 @@ const ViewEmployees: React.FC = () => {
    * @param {User} user
    * @returns {void}
    */
-  const handleEdit = (user: User) => {
+  const handleEdit = (user: User): void => {
     setSelectedUser(user);
     setIsEditMode(true);
     setIsModalOpen(true);
@@ -132,7 +132,7 @@ const ViewEmployees: React.FC = () => {
    * @param {keyof User} key
    * @returns {void}
    */
-  const handleSort = (key: keyof User) => {
+  const handleSort = (key: keyof User):void => {
     let direction: "asc" | "desc" = "asc";
     if (
       sortConfig &&
@@ -169,7 +169,7 @@ const ViewEmployees: React.FC = () => {
    * @description to add a new user
    * @returns {void}
    */
-  const handleAddEmployee = () => {
+  const handleAddEmployee = (): void => {
     // Create an empty user object for the create form
     setSelectedUser({
       username: "",
@@ -197,7 +197,7 @@ const ViewEmployees: React.FC = () => {
         <FaSpinner className="spinner" />
       </div>
     );
-  }
+  } 
   if (isError) {
     return <div className="error">Error loading users: {error?.message}</div>;
   }
@@ -251,7 +251,11 @@ const ViewEmployees: React.FC = () => {
           <thead className="table-header">
             <tr>
               <th>Index</th>
-              <th onClick={() => handleSort("username")} className="sortable">
+              <th
+                onClick={() => handleSort("username")}
+                className="sortable"
+                title="Sort"
+              >
                 Username{" "}
                 {sortConfig?.key === "username" &&
                   (sortConfig.direction === "asc" ? (

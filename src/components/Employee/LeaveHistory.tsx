@@ -44,7 +44,7 @@ const LeaveHistory: React.FC<LeaveHistoryProps> = ({
    * @param {string} status
    * @returns {string}
    */
-  const getStatusClass = (status: string) => {
+  const getStatusClass = (status: string): string => {
     switch (status.toLowerCase()) {
       case "pending":
         return "leave-status-pending";
@@ -72,9 +72,9 @@ const LeaveHistory: React.FC<LeaveHistoryProps> = ({
   /**
    * @description function to cancel a leave
    * @param {LeaveApplication} leave
-   * @returns {void}
+   * @returns {Promise<void>}
    */
-  const handleCancelLeave = async (leave: LeaveApplication) => {
+  const handleCancelLeave = async (leave: LeaveApplication): Promise<void> => {
     if (!["pending", "approved"].includes(leave.status)) {
       toast.error("Only pending or approved leave requests can be cancelled.");
       return;
@@ -119,15 +119,14 @@ const LeaveHistory: React.FC<LeaveHistoryProps> = ({
       toast.error("Failed to cancel leave request. Please try again.");
     }
   };
-  //utility function to know whether to enable or disable actions
-  //disabled edit/cancel if leave already starts
+
   /**
    * @description utility function to know whether to enable or disable actions
    * disabled edit/cancel if leave already starts
    * @param {LeaveApplication} leave
    * @returns {boolean}
    */
-  const canPerformActions = (leave: LeaveApplication) => {
+  const canPerformActions = (leave: LeaveApplication) :boolean=> {
     if (leave.status === "pending") {
       return true;
     } else if (leave.status === "approved") {

@@ -34,7 +34,7 @@
       "managerId": "db90",
       "department": "HR",
       "leaveBalance": 19,
-      "unpaidLeaves": 12
+      "unpaidLeaves": 33
     },
     {
       "id": "2155",
@@ -57,7 +57,7 @@
       "department": "Python",
       "managerId": "7ad6",
       "leaveBalance": 20,
-      "unpaidLeaves": 1,
+      "unpaidLeaves": 0,
       "id": "d9a9"
     },
     {
@@ -107,18 +107,6 @@
       "leaveBalance": 20,
       "unpaidLeaves": 0,
       "id": "7ad6"
-    },
-    {
-      "id": "68c8",
-      "username": "dummy user",
-      "email": "dummy@pal.tech",
-      "password": "welcome",
-      "role": "manager",
-      "gender": "male",
-      "department": "Frontend Developer",
-      "managerId": "7ad6",
-      "leaveBalance": 20,
-      "unpaidLeaves": 0
     }
   ],
   "leaveApplications": [
@@ -225,6 +213,32 @@
       "currentManager": "db90",
       "reason": "Sick",
       "createdAt": "2025-05-22T11:44:43.284Z"
+    },
+    {
+      "id": "1747980502010",
+      "employeeId": "d9a9",
+      "startDate": "2025-09-02T18:30:00.000Z",
+      "endDate": "2025-09-02T18:30:00.000Z",
+      "type": "unpaid",
+      "status": "pending",
+      "requestedBy": "Vijay Inampudi (vijay@pal.tech)",
+      "approvedBy": null,
+      "currentManager": "7ad6",
+      "reason": "Sick",
+      "createdAt": "2025-05-23T06:08:22.010Z"
+    },
+    {
+      "id": "1747988447230",
+      "employeeId": "2185",
+      "startDate": "2025-07-01T18:30:00.000Z",
+      "endDate": "2025-07-29T18:30:00.000Z",
+      "type": "unpaid",
+      "status": "pending",
+      "requestedBy": "Dharani (dharani@pal.tech)",
+      "approvedBy": null,
+      "currentManager": "db90",
+      "reason": "Sick",
+      "createdAt": "2025-05-23T08:20:47.230Z"
     }
   ]
 }

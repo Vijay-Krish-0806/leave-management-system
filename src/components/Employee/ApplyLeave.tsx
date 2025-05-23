@@ -16,7 +16,7 @@ import { setUser } from "../../features/auth/authSlice";
 import { toast } from "react-toastify";
 import { LeaveApplication } from "../../types";
 import LeaveHistory from "./LeaveHistory";
-import { HOLIDAYS } from "../../constants";
+import { HOLIDAYS, LEAVE_BALANCE } from "../../constants";
 import { combinedOperations, leaveApi, userApi } from "../../api/apiCalls";
 import "../css/ApplyLeave.css";
 import { FaPlus } from "react-icons/fa6";
@@ -67,14 +67,17 @@ const LeaveManagement: React.FC = () => {
     queryKey: ["leave-applications"],
     queryFn: () => leaveApi.getByEmployeeId(auth.id),
   });
+
   const { data: user } = useQuery({
     queryKey: ["users", auth.id],
     queryFn: () => userApi.getById(auth.id),
     enabled: !!auth.id,
   });
+
   useEffect(() => {
     document.title = "Apply Leave";
   }, []);
+
   useEffect(() => {
     if (!auth.id) {
       return;
@@ -83,13 +86,14 @@ const LeaveManagement: React.FC = () => {
       setManagerId(user.managerId);
     }
   }, [user]);
+
   useEffect(() => {
     if (!auth) return;
     /**
      * @description uses to fetch manager names
      * @returns {void}
      */
-    const fetchManagerNames = async () => {
+    const fetchManagerNames = async (): Promise<void> => {
       try {
         const promises = (userLeaves || [])
           ?.filter((leave) => leave.approvedBy !== null)
@@ -105,6 +109,7 @@ const LeaveManagement: React.FC = () => {
     };
     fetchManagerNames();
   }, [auth, userLeaves, managerId]);
+
   useEffect(() => {
     setLeaves(
       (userLeaves || [])
@@ -115,16 +120,19 @@ const LeaveManagement: React.FC = () => {
         }))
     );
   }, [userLeaves]);
+
   const leaveDates: Date[] = leaves.flatMap(({ startDate, endDate }) => {
     const start = startDate;
     const end = endDate;
     return eachDayOfInterval({ start, end });
   });
+
   //used to highlight the HOLIDAYS and approved leaves in calendar
   const highlightWithRanges = [
     { "react-datepicker__day--highlighted-holiday": HOLIDAYS },
     { "react-datepicker__day--highlighted-leave": leaveDates },
   ];
+
   //to count total working days excluding weekends
   const totalWorkingDays = useMemo(() => {
     if (!startDate || !endDate) return 0;
@@ -133,7 +141,7 @@ const LeaveManagement: React.FC = () => {
       (d) => !isWeekend(d) && !HOLIDAYS.includes(d.toISOString().split("T")[0])
     ).length;
   }, [startDate, endDate]);
-  //to handle date ranges
+
   /**
     * @description to hande Date ranges
     * @param {[
@@ -142,16 +150,16 @@ const LeaveManagement: React.FC = () => {
         ]} update
     * @returns {void}
     */
-  const handleChange = (update: [Date | null, Date | null]) => {
+  const handleChange = (update: [Date | null, Date | null]): void => {
     setDateRange(update);
     if (errors.dateRange) setErrors((prev) => ({ ...prev, dateRange: false }));
   };
-  //reset the form after submitting
+
   /**
    * @description reset the form after submitting
    * @returns {void}
    */
-  const resetForm = () => {
+  const resetForm = (): void => {
     setDateRange([null, null]);
     setLeaveType("");
     setLeaveReason("");
@@ -164,14 +172,14 @@ const LeaveManagement: React.FC = () => {
    * @description to set popup open to true
    * @returns {void}
    */
-  const openPopup = () => {
+  const openPopup = (): void => {
     setIsPopupOpen(true);
   };
   /**
    * @description to set errors to false when popup is closed
    * @returns {void}
    */
-  const closePopup = () => {
+  const closePopup = (): void => {
     resetForm();
     setErrors({
       dateRange: false,
@@ -180,12 +188,12 @@ const LeaveManagement: React.FC = () => {
       isLeaveOverlapping: false,
     });
   };
-  //to check whether current applied leave is already existed (range)
+
   /**
    * @description to check whether current applied leave is already existed (range)
    * @returns {boolean}
    */
-  const checkIsLeaveOverlapping = () => {
+  const checkIsLeaveOverlapping = (): boolean => {
     if (isEditing && originalLeave) {
       const originalStartDate = new Date(originalLeave.startDate);
       const originalEndDate = new Date(originalLeave.endDate);
@@ -211,13 +219,13 @@ const LeaveManagement: React.FC = () => {
         )
       );
     });
-    return overlappingLeaves && overlappingLeaves.length > 0;
+    return (overlappingLeaves && overlappingLeaves.length > 0) || false;
   };
   /**
    * @description to validate the form
    * @returns {boolean}
    */
-  const validateForm = () => {
+  const validateForm = (): boolean => {
     const newErrors = {
       dateRange: !startDate || !endDate,
       leaveType: !leaveType,
@@ -233,7 +241,7 @@ const LeaveManagement: React.FC = () => {
    * @param {LeaveApplication} leave
    * @returns {void}
    */
-  const handleEditLeave = (leave: LeaveApplication) => {
+  const handleEditLeave = (leave: LeaveApplication): void => {
     if (!["pending", "approved"].includes(leave.status)) {
       toast.error("Only pending leave requests can be edited.");
       return;
@@ -263,10 +271,10 @@ const LeaveManagement: React.FC = () => {
     );
   };
   /**
-   * @description used to submit the leave requests 
+   * @description used to submit the leave requests
    * @returns {void}
    */
-  const handleSubmitLeave = async () => {
+  const handleSubmitLeave = async (): Promise<void> => {
     if (!validateForm()) {
       toast.error("Please fill in all required fields");
       return;
@@ -299,14 +307,14 @@ const LeaveManagement: React.FC = () => {
         startDate: startDate!.toISOString(),
         endDate: endDate!.toISOString(),
         type: leaveType,
-        status: "pending",
+        status: "pending" as "approved" | "rejected" | "cancelled" | "pending",
         requestedBy: `${user?.username} (${user?.email})`,
         approvedBy: null,
         currentManager: auth.managerId,
         reason: leaveReason,
         createdAt,
       };
-      let updatedLeaveBalance = user?.leaveBalance || 20;
+      let updatedLeaveBalance = user?.leaveBalance || LEAVE_BALANCE;
       let updatedUnpaid = user?.unpaidLeaves || 0;
       const days = totalWorkingDays;
       if (!isEditing) {
@@ -476,20 +484,20 @@ const LeaveManagement: React.FC = () => {
                   >
                     <option value="">Select leave type</option>
                     <option value="unpaid">
-                      Unpaid leaves – infinite days
+                      Unpaid leaves - infinite days
                     </option>
                     <option value="bereavement">Bereavement Leave</option>
                     {user?.gender === "male" ? (
                       <option value="paternity">
-                        Paternity Leave – 5 days
+                        Paternity Leave - 5 days
                       </option>
                     ) : (
                       <option value="maternity">
-                        Maternity Leave – 182 days
+                        Maternity Leave - 182 days
                       </option>
                     )}
                     <option value="paid">
-                      Paid leave – {user?.leaveBalance} days available
+                      Paid leave - {user?.leaveBalance} days available
                     </option>
                   </select>
                   {errors.leaveType && (

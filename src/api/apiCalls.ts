@@ -1,7 +1,6 @@
 import axios from "axios";
 import { User, LeaveApplication } from "../types";
-
-const API_URL = "http://localhost:3001";
+import { API_URL } from "../constants";
 
 // User related API calls
 export const userApi = {
@@ -98,8 +97,8 @@ export const userApi = {
   },
 };
 
-//Leave Applications Api calls
 
+//Leave Applications Api calls
 export const leaveApi = {
   // Get all leave applications
   getAll: async (): Promise<LeaveApplication[]> => {
@@ -229,7 +228,6 @@ export const leaveApi = {
   },
 };
 
-
 //combined API calls
 export const combinedOperations = {
   // Apply for leave (creates leave application and updates user leave balance)
@@ -316,7 +314,7 @@ export const combinedOperations = {
           currentManager: defaultManagerId,
         });
       }
-      
+
       // Step 4: Delete the user
       await userApi.delete(userId);
     } catch (error) {

@@ -17,7 +17,7 @@ export interface LeaveApplication {
   startDate: string;
   endDate: string;
   type: string;
-  status: string;
+  status: "approved" | "rejected" |"cancelled" |"pending";
   requestedBy: string;
   approvedBy?: string | null;
   currentManager?: string;

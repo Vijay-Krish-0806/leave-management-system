@@ -23,3 +23,4 @@ export const ROLES = ["employee", "manager", "HR"];
 export const LEAVE_BALANCE = 20;
 
 export const DEFAULT_MANAGER_ID = "2183";
+export const API_URL = "http://localhost:3001";

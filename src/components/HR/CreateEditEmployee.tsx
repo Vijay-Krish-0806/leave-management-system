@@ -50,6 +50,7 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
   useEffect(() => {
     document.title = "Create Employee";
   }, []);
+
   const { data: usersList } = useQuery({
     queryKey: ["users"],
     queryFn: userApi.getAll,
@@ -103,9 +104,11 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
   /**
    * @description Function to submit created/edited user details
    * @param {React.FormEvent<HTMLFormElement>} event
-   * @returns {void}
+   * @returns {Promise<void>}
    */
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     event.preventDefault();
     setIsSubmitting(true);
     const form = event.currentTarget;
@@ -121,6 +124,7 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
         setIsSubmitting(false);
         return;
       }
+      
       const email = formData.get("email") as string;
       const role = formData.get("role") as string;
       const gender = formData.get("gender") as string;
@@ -304,7 +308,6 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
                       (user: User) => user.role === "manager"
                     ) || []
               }
-              //@ts-ignore
               initialUser={initialUser}
               placeholder="Select Manager"
               required={true}

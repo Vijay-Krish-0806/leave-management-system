@@ -30,7 +30,7 @@ const ViewLeaves: React.FC = () => {
     document.title = "All Leaves";
   }, []);
   const filteredLeaves = useMemo(() => {
-    if (!leaves) return [];
+    if (!leaves) return []; 
     return leaves.filter((leave) => {
       const matchesUser = leave.requestedBy
         .toLowerCase()

@@ -98,6 +98,7 @@ const LoginPage: React.FC = () => {
                 onChange={(e) => setUserEmail(e.target.value)}
                 className="input-field"
                 required
+                autoFocus
               />
             </div>
 

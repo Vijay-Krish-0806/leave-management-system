@@ -7,7 +7,7 @@ import { User } from "../types";
 type UserProps = User;
 interface Props {
   usersList: UserProps[];
-  initialUser: UserProps | null;
+  initialUser: UserProps | undefined;
   placeholder: string;
   required: boolean;
 }

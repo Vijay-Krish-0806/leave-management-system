@@ -97,7 +97,7 @@ label {
   font-size: 1.1rem;
   font-weight: bold;
   cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
+  transition: background 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -123,8 +123,6 @@ label {
   text-align: center;
   font-weight: 500;
 }
-
-/* Responsive styles */
 @media screen and (max-width: 1024px) {
   .left-side {
     font-size: 4rem;
