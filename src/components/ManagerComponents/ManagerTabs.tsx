@@ -22,8 +22,8 @@ const ManagerTabs: React.FC = () => {
         to="view-team"
         className={({ isActive }) => `tab ${isActive ? "active" : ""}`}
       >
-        View Team
         <FaUsers />
+        View Team
       </NavLink>
       <NavLink
         to="view-active-team-leaves"

@@ -4,15 +4,11 @@ import { eachDayOfInterval, format, isWeekend } from "date-fns";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { LeaveApplication } from "../../types";
-import {
-  FaArrowLeft,
-  FaEnvelope,
-  FaUserTie,
-  FaBuilding,
-  FaUserFriends,
-} from "react-icons/fa";
+import { FaArrowLeft } from "react-icons/fa";
 import "../css/EmployeeDetails.css";
 import { userApi } from "../../api/apiCalls";
+import UserCard from "../UserCard";
+
 /**
  * @description
  * EmployeeDetails component for displaying detailed information about an employee.
@@ -39,7 +35,9 @@ const EmployeeDetails = () => {
     );
     return response.data;
   };
+
   const [managerName, setManagerName] = useState("");
+
   const {
     data: userData,
     isLoading,
@@ -57,11 +55,12 @@ const EmployeeDetails = () => {
     queryKey: ["employee-leaves"],
     queryFn: getAllLeaves,
   });
+
   /**
    * @description to get the manager name based on manager ID
    * @returns {Promise<void>}
    */
-  const getManagerName = async () :Promise<void>=> {
+  const getManagerName = async (): Promise<void> => {
     if (userData && userData.managerId) {
       try {
         const res = await axios.get(
@@ -73,20 +72,24 @@ const EmployeeDetails = () => {
       }
     }
   };
+
   useEffect(() => {
     if (userData && userData.managerId) {
       getManagerName();
     }
   }, [userData]);
+
   /**
    * @description when go back is clicked to navigate to previous page
    * @returns {void}
    */
-  const handleNavigate = ():void => {
+  const handleNavigate = (): void => {
     navigate(-1);
   };
+
   if (isLoading) return <div className="loading">Loading user data...</div>;
   if (isError) return <div className="error">Error loading user data</div>;
+
   return (
     <div className="employee-details-container">
       <div className="back-button-container">
@@ -96,50 +99,13 @@ const EmployeeDetails = () => {
       </div>
 
       <div className="employee-content">
-        <div className="user-card">
-          <div className="user-header">
-            <div className="avatar-placeholder">
-              {userData?.username?.charAt(0) || "U"}
-            </div>
-            <h2>{userData?.username || "User"}</h2>
-          </div>
-
-          <div className="user-info-list">
-            <div className="info-item">
-              <FaEnvelope className="info-icon" />
-              <div>
-                <span className="info-label">Email</span>
-                <span className="info-value">{userData?.email || "N/A"}</span>
-              </div>
-            </div>
-
-            <div className="info-item">
-              <FaUserTie className="info-icon" />
-              <div>
-                <span className="info-label">Role</span>
-                <span className="info-value">{userData?.role || "N/A"}</span>
-              </div>
-            </div>
-
-            <div className="info-item">
-              <FaUserFriends className="info-icon" />
-              <div>
-                <span className="info-label">Reports to</span>
-                <span className="info-value">{managerName || "N/A"}</span>
-              </div>
-            </div>
-
-            <div className="info-item">
-              <FaBuilding className="info-icon" />
-              <div>
-                <span className="info-label">Department</span>
-                <span className="info-value">
-                  {userData?.department || "N/A"}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <UserCard
+          username={userData?.username}
+          email={userData?.email}
+          role={userData?.role}
+          department={userData?.department}
+          managerName={managerName}
+        />
 
         <div className="leaves-section">
           <h2>Leave History</h2>
@@ -207,4 +173,5 @@ const EmployeeDetails = () => {
     </div>
   );
 };
+
 export default EmployeeDetails;

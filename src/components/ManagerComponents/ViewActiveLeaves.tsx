@@ -84,9 +84,9 @@ const ViewActiveLeaves: React.FC = () => {
   /**
    * @description to handle reject and update the user leave balance
    * @param {LeaveApplication} leave
-   * @returns {void}
+   * @returns {Promise<void>}
    */
-  const handleReject = async (leave: LeaveApplication) => {
+  const handleReject = async (leave: LeaveApplication):Promise<void> => {
     try {
       await approveRejectMutation.mutateAsync({
         ...leave,

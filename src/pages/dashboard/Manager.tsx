@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import ManagerTabs from "../../components/Manager/ManagerTabs";
+import ManagerTabs from "../../components/ManagerComponents/ManagerTabs";
 
 /**
  * ManagerPage component that renders the ManagerTabs and the Outlet.

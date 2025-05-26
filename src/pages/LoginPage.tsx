@@ -31,9 +31,9 @@ const LoginPage: React.FC = () => {
   const dispatch = useDispatch();
   const auth = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
-    useEffect(() => {
-      document.title = "Login Page";
-    }, []);
+  useEffect(() => {
+    document.title = "Login Page";
+  }, []);
 
   useEffect(() => {
     if (auth.email) {
@@ -90,7 +90,9 @@ const LoginPage: React.FC = () => {
             {error && <div className="error-msg">{error}</div>}
 
             <div className="input-container">
-              <label htmlFor="email">Email:</label>
+              <label htmlFor="email" className="required">
+                Email
+              </label>
               <input
                 type="email"
                 id="email"
@@ -103,7 +105,9 @@ const LoginPage: React.FC = () => {
             </div>
 
             <div className="input-container">
-              <label htmlFor="password">Password:</label>
+              <label htmlFor="password" className="required">
+                Password
+              </label>
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"

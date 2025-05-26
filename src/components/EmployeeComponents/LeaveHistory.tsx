@@ -157,7 +157,7 @@ const LeaveHistory: React.FC<LeaveHistoryProps> = ({
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
           >
-            <option value="All">All Statuses</option>
+            <option value="All">All Status</option>
             <option value="pending">Pending</option>
             <option value="approved">Approved</option>
             <option value="cancelled">Cancelled</option>

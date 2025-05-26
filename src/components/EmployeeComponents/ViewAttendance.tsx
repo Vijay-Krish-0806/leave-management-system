@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { AgCharts } from "ag-charts-react";
 import { AgChartOptions } from "ag-charts-community";
 import "../css/ViewAttendance.css";
@@ -7,6 +7,8 @@ import { RootState } from "../../app/store";
 import { useQuery } from "@tanstack/react-query";
 import { userApi } from "../../api/apiCalls";
 import { LEAVE_BALANCE } from "../../constants";
+import UserCard from "../UserCard";
+import axios from "axios";
 
 interface LeaveData {
   type: string;
@@ -14,6 +16,7 @@ interface LeaveData {
   available: number | string;
   total: number | string;
 }
+
 /**
  * @description
  *  LeaveBalanceChart component for displaying the user's leave balance using a donut chart.
@@ -24,9 +27,12 @@ interface LeaveData {
  */
 const LeaveBalanceChart: React.FC = () => {
   const userId = useSelector((state: RootState) => state.auth.id);
+  const [managerName, setManagerName] = useState("");
+
   useEffect(() => {
     document.title = "Leave Balance";
   }, []);
+
   const {
     data: userData,
     isLoading,
@@ -36,11 +42,36 @@ const LeaveBalanceChart: React.FC = () => {
     queryFn: () => userApi.getById(userId),
     enabled: !!userId,
   });
+
+  /**
+   * @description to get the manager name based on manager ID
+   * @returns {Promise<void>}
+   */
+  const getManagerName = async (): Promise<void> => {
+    if (userData && userData.managerId) {
+      try {
+        const res = await axios.get(
+          `http://localhost:3001/users/${userData.managerId}`
+        );
+        setManagerName(res.data.username);
+      } catch (e) {
+        console.error("Error fetching manager:", e);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (userData && userData.managerId) {
+      getManagerName();
+    }
+  }, [userData]);
+
   if (isLoading) {
     return (
       <div className="loading-indicator">Loading leave balance data...</div>
     );
   }
+
   if (isError || !userData) {
     return (
       <div className="error-message">
@@ -48,12 +79,14 @@ const LeaveBalanceChart: React.FC = () => {
       </div>
     );
   }
+
   const paidLeavesConsumed =
     userData?.leaveBalance !== undefined
       ? LEAVE_BALANCE - userData.leaveBalance
       : 0;
   const unpaidLeavesConsumed =
     userData?.unpaidLeaves !== undefined ? userData.unpaidLeaves : 0;
+
   const leaveData: LeaveData[] = [
     {
       type: "Paid Leaves",
@@ -68,10 +101,12 @@ const LeaveBalanceChart: React.FC = () => {
       total: "∞",
     },
   ];
+
   const chartData = [
     { category: "Paid Leaves Used", value: paidLeavesConsumed },
     { category: "Unpaid Leaves Used", value: unpaidLeavesConsumed },
   ];
+
   const chartOptions: AgChartOptions = {
     data: chartData,
     title: {
@@ -97,18 +132,30 @@ const LeaveBalanceChart: React.FC = () => {
       position: "bottom",
     },
   };
+
   return (
     <div className="leave-container">
-      <div className="chart-and-stats-container">
-        <div className="chart-container">
-          <AgCharts
-            options={chartOptions}
-            style={{ height: "400px", width: "100%" }}
+      <div className="three-column-container">
+        <div className="user-card-column">
+          <UserCard
+            username={userData?.username}
+            email={userData?.email}
+            role={userData?.role}
+            department={userData?.department}
+            managerName={managerName}
+            
           />
         </div>
-        <div className="leave-stats">
+
+        <div className="chart-column card-base">
+          <AgCharts
+            options={chartOptions}
+            style={{ height: "375px", width: "100%" }}
+          />
+        </div>
+        <div className="leave-stats-column">
           {leaveData.map((item, index) => (
-            <div key={index} className="leave-card">
+            <div key={index} className="leave-card card-base">
               <h3 className="leave-card-title">{item.type}</h3>
               <div className="leave-metric">
                 <div className="leave-label">
@@ -148,4 +195,5 @@ const LeaveBalanceChart: React.FC = () => {
     </div>
   );
 };
+
 export default LeaveBalanceChart;

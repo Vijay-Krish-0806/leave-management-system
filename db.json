@@ -57,7 +57,7 @@
       "department": "Python",
       "managerId": "7ad6",
       "leaveBalance": 15,
-      "unpaidLeaves": 0,
+      "unpaidLeaves": 1,
       "id": "d9a9"
     },
     {
@@ -135,6 +135,32 @@
       "currentManager": "7ad6",
       "reason": "Sick",
       "createdAt": "2025-05-23T12:21:57.088Z"
+    },
+    {
+      "id": "1748243491392",
+      "employeeId": "2185",
+      "startDate": "2025-05-26T18:30:00.000Z",
+      "endDate": "2025-05-26T18:30:00.000Z",
+      "type": "unpaid",
+      "status": "pending",
+      "requestedBy": "Dharani (dharani@pal.tech)",
+      "approvedBy": null,
+      "currentManager": "db90",
+      "reason": "Sick",
+      "createdAt": "2025-05-26T07:11:31.392Z"
+    },
+    {
+      "id": "1748246988230",
+      "employeeId": "d9a9",
+      "startDate": "2025-07-15T18:30:00.000Z",
+      "endDate": "2025-07-15T18:30:00.000Z",
+      "type": "unpaid",
+      "status": "pending",
+      "requestedBy": "Vijay Inampudi (vijay@pal.tech)",
+      "approvedBy": null,
+      "currentManager": "7ad6",
+      "reason": "Sick",
+      "createdAt": "2025-05-26T08:09:48.230Z"
     }
   ]
 }

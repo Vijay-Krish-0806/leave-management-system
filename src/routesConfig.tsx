@@ -1,16 +1,16 @@
-import ViewAttendance from "./components/Employee/ViewAttendance";
-import ApplyLeave from "./components/Employee/ApplyLeave";
-import ViewTeam from "./components/Manager/ViewTeam";
-import ViewActiveLeaves from "./components/Manager/ViewActiveLeaves";
-import ViewLeaveHistory from "./components/Manager/ViewLeaveHistory";
-import CreateEditEmployee from "./components/HR/CreateEditEmployee";
-import ViewEmployees from "./components/HR/ViewEmployees";
-import ViewLeaves from "./components/HR/ViewLeaves";
+import ViewAttendance from "./components/EmployeeComponents/ViewAttendance";
+import ApplyLeave from "./components/EmployeeComponents/ApplyLeave";
+import ViewTeam from "./components/ManagerComponents/ViewTeam";
+import ViewActiveLeaves from "./components/ManagerComponents/ViewActiveLeaves";
+import ViewLeaveHistory from "./components/ManagerComponents/ViewLeaveHistory";
+import CreateEditEmployee from "./components/HRComponents/CreateEditEmployee";
+import ViewEmployees from "./components/HRComponents/ViewEmployees";
+import ViewLeaves from "./components/HRComponents/ViewLeaves";
 import EmployeePage from "./pages/dashboard/Employee";
 import ManagerPage from "./pages/dashboard/Manager";
 import HRPage from "./pages/dashboard/HR";
 import LoginPage from "./pages/LoginPage";
-import EmployeeDetails from "./components/HR/EmployeeDetails";
+import EmployeeDetails from "./components/HRComponents/EmployeeDetails";
 
 export const ROLES = {
   EMPLOYEE: "employee",
@@ -37,16 +37,15 @@ export const commonRoutes = [
 // Role specific routes
 export const roleSpecificRoutes = {
   [ROLES.EMPLOYEE]: [
-    // Employee-specific routes 
+    // Employee-specific routes
   ],
 
-  // Manager-specific routes 
+  // Manager-specific routes
   [ROLES.MANAGER]: [
     {
       path: "view-team",
       element: <ViewTeam />,
       name: "View Team",
-    
     },
     {
       path: "view-active-team-leaves",
@@ -59,7 +58,7 @@ export const roleSpecificRoutes = {
       name: "View Team Leaves",
     },
   ],
-  // HR-specific routes 
+  // HR-specific routes
   [ROLES.HR]: [
     {
       path: "create",
@@ -77,15 +76,15 @@ export const roleSpecificRoutes = {
       name: "Manage Leaves",
     },
     {
-      path:"employee-details/:userId",
-      element:<EmployeeDetails/>,
-      name:"Employee details"
+      path: "employee-details/:userId",
+      element: <EmployeeDetails />,
+      name: "Employee details",
     },
     {
-      path:"view-active-team-leaves",
-      element:<ViewActiveLeaves/>,
-      name:"Active leave details"
-    }
+      path: "view-active-team-leaves",
+      element: <ViewActiveLeaves />,
+      name: "Active leave details",
+    },
   ],
 };
 

@@ -43,7 +43,7 @@
   font-size: 0.95rem;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .logout-button:hover {

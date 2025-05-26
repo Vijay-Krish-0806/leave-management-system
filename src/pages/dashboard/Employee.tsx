@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import EmployeeTabs from "../../components/Employee/EmployeeTabs";
+import EmployeeTabs from "../../components/EmployeeComponents/EmployeeTabs";
 
 /**
  * EmployeePage component that renders the EmployeeTabs and the Outlet.
@@ -8,7 +8,7 @@ import EmployeeTabs from "../../components/Employee/EmployeeTabs";
  * displays the tabs for employee management along with any nested routes
  * defined in the router.
  *
- * 
+ *
  * @returns {JSX.Element} The rendered EmployeePage component.
  */
 const EmployeePage = () => {

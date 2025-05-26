@@ -1,7 +1,7 @@
 import React from "react";
 import { FaSpinner } from "react-icons/fa";
 export interface Column<T> {
-  header: string;
+  header: string | React.ReactNode;
   accessor: keyof T | ((item: T) => React.ReactNode);
 }
 interface TableProps<T> {
@@ -50,7 +50,9 @@ const Table = <T extends object>({
           <tr>
             <th>Index</th>
             {columns.map((column) => (
-              <th key={column.header}>{column.header}</th>
+              <th key={column.header as string}>
+                {column.header as string | React.ReactNode}
+              </th>
             ))}
           </tr>
         </thead>
@@ -68,7 +70,7 @@ const Table = <T extends object>({
               >
                 <td>{index + 1}</td>
                 {columns.map((column) => (
-                  <td key={column.header}>
+                  <td key={column.header as string}>
                     {typeof column.accessor === "function"
                       ? column.accessor(item)
                       : (item[column.accessor] as React.ReactNode)}

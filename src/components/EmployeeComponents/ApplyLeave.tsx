@@ -50,6 +50,7 @@ const LeaveManagement: React.FC = () => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editLeaveId, setEditLeaveId] = useState<string | null>(null);
   const [managerId, setManagerId] = useState<string>();
+
   // Store original leave data for comparison when editing
   const [originalLeave, setOriginalLeave] = useState<LeaveApplication | null>(
     null
@@ -62,6 +63,7 @@ const LeaveManagement: React.FC = () => {
     leaveReason: false,
     isLeaveOverlapping: false,
   });
+
   //API calls
   const { data: userLeaves, isLoading } = useQuery({
     queryKey: ["leave-applications"],
@@ -235,7 +237,7 @@ const LeaveManagement: React.FC = () => {
     setErrors(newErrors);
     return !Object.values(newErrors).some(Boolean);
   };
-  //to handle editing of leave
+
   /**
    * @description to handle editing of leave
    * @param {LeaveApplication} leave
@@ -243,7 +245,7 @@ const LeaveManagement: React.FC = () => {
    */
   const handleEditLeave = (leave: LeaveApplication): void => {
     if (!["pending", "approved"].includes(leave.status)) {
-      toast.error("Only pending leave requests can be edited.");
+      toast.error("Only pending/approved leave requests can be edited.");
       return;
     }
     setIsEditing(true);
@@ -254,9 +256,8 @@ const LeaveManagement: React.FC = () => {
     setOriginalLeave(leave);
     setIsPopupOpen(true);
   };
-  //when editing the existing leave check if only reason is changed
   /**
-   * @description when editing the existing leave check if only reason is changed
+   * @description when editing the existing leave check if only reason is changed,if yes no need to make a new leave request
    * @returns {boolean}
    */
   const isOnlyReasonChanged = (): boolean => {
@@ -271,8 +272,8 @@ const LeaveManagement: React.FC = () => {
     );
   };
   /**
-   * @description used to submit the leave requests
-   * @returns {void}
+   * @description function to submit the leave requests
+   * @returns {Promise<void>}
    */
   const handleSubmitLeave = async (): Promise<void> => {
     if (!validateForm()) {
@@ -345,7 +346,7 @@ const LeaveManagement: React.FC = () => {
         const originalLeave = userLeaves?.find((l) => l.id === editLeaveId);
         const originalDays = totalWorkingDays;
         const originalType = originalLeave?.type;
-        //when editing the leave if type of leave is changed, change the leave balances accordingly
+        //when editing the leave request , if type of leave is changed, change the leave balances accordingly
         if (originalType === "paid") {
           updatedLeaveBalance += originalDays;
         } else {
@@ -548,7 +549,7 @@ const LeaveManagement: React.FC = () => {
                     <div className="leave-detail">
                       <span className="detail-label">To:</span>
                       <span className="detail-value">
-                        {format(endDate || startDate, "PPP")}
+                        {format(endDate, "PPP")}
                       </span>
                     </div>
                     <div className="leave-detail total-days">

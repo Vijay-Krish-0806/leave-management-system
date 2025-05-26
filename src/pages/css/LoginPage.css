@@ -59,6 +59,11 @@ label {
   color: #222;
 }
 
+label::after {
+  content: "*";
+  color: red;
+}
+
 .input-field {
   width: 100%;
   padding: 11px 40px 11px 12px;
@@ -101,7 +106,7 @@ label {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap:10px
+  gap: 10px;
 }
 
 .submit-btn:hover {

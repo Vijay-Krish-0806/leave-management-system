@@ -13,7 +13,6 @@
     border-radius: 5px;
     background-color: #f9fafb;
     cursor: pointer;
-    transition: border-color 0.2s, box-shadow 0.2s;
   }
   
   .dropdown-header:hover {

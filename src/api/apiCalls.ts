@@ -117,7 +117,7 @@ export const leaveApi = {
   getByEmployeeId: async (employeeId: string): Promise<LeaveApplication[]> => {
     try {
       const response = await axios.get<LeaveApplication[]>(
-        `${API_URL}/leaveApplications/?employeeId=${employeeId}&_sort=createdAt&_order=desc`
+        `${API_URL}/leaveApplications/?employeeId=${employeeId}`
       );
       return response.data;
     } catch (error) {
@@ -228,7 +228,7 @@ export const leaveApi = {
   },
 };
 
-//combined API calls
+//more than one API call combined
 export const combinedOperations = {
   // Apply for leave (creates leave application and updates user leave balance)
   applyForLeave: async (
@@ -286,7 +286,7 @@ export const combinedOperations = {
     defaultManagerId: string
   ): Promise<void> => {
     try {
-      // Step 1: Update all users who had this person as manager
+      // Update all users who had this person as manager
       const allUsers = await userApi.getAll();
       const subordinates = allUsers.filter((user) => user.managerId === userId);
 
@@ -297,13 +297,13 @@ export const combinedOperations = {
         });
       }
 
-      // Step 2: Delete all leave applications for this user
+      //Delete all leave applications for this user
       const userLeaves = await leaveApi.getByEmployeeId(userId);
       for (const leave of userLeaves) {
         await leaveApi.delete(leave.id);
       }
 
-      // Step 3: Update leave applications where user was the manager
+      //Update leave applications where user was the manager
       const allLeaves = await leaveApi.getAll();
       const managedLeaves = allLeaves.filter(
         (leave) => leave.currentManager === userId
