@@ -10,6 +10,7 @@ import { LeaveApplication, User } from "../../types";
 import { leaveApi, userApi } from "../../api/apiCalls";
 import Table, { Column } from "../CommonTable";
 import "../css/Table.css";
+import { LeaveStatus, LeaveType } from "../../constants";
 
 /**
  * @description Use to show active leaves of a team members to manager for approval or reject
@@ -30,7 +31,7 @@ const ViewActiveLeaves: React.FC = () => {
     select: (data) => {
       return data.filter(
         (leave) =>
-          leave.currentManager === auth.id && leave.status === "pending"
+          leave.currentManager === auth.id && leave.status === LeaveStatus.Pending
       );
     },
   });
@@ -70,7 +71,7 @@ const ViewActiveLeaves: React.FC = () => {
    */
   const handleApprove = (leave: LeaveApplication): void => {
     approveRejectMutation.mutate(
-      { ...leave, status: "approved", approvedBy: auth.id },
+      { ...leave, status: LeaveStatus.Approved, approvedBy: auth.id },
       {
         onSuccess: () => {
           toast.success(
@@ -90,7 +91,7 @@ const ViewActiveLeaves: React.FC = () => {
     try {
       await approveRejectMutation.mutateAsync({
         ...leave,
-        status: "rejected",
+        status: LeaveStatus.Rejected,
         approvedBy: auth.id,
       });
 
@@ -101,9 +102,9 @@ const ViewActiveLeaves: React.FC = () => {
       });
       const workingDays = allDays.filter((d) => !isWeekend(d)).length;
 
-      if (leave.type === "paid") {
+      if (leave.type === LeaveType.Paid) {
         userData.leaveBalance += workingDays;
-      } else if (leave.type === "unpaid") {
+      } else if (leave.type ===LeaveType.Unpaid) {
         userData.unpaidLeaves = Math.max(
           0,
           (userData.unpaidLeaves || 0) - workingDays
@@ -119,7 +120,6 @@ const ViewActiveLeaves: React.FC = () => {
     }
   };
 
-  // Define table columns
   const columns: Column<LeaveApplication>[] = [
     {
       header: "Username",

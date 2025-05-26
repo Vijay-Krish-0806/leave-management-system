@@ -54,7 +54,7 @@ const LoginPage: React.FC = () => {
 
       if (!user) return setError("User doesn't exist. Please register first.");
       if (user.password !== userPassword) {
-        return setError("Invalid credentials. Please check your password.");
+        return setError("Invalid credentials. Retry.");
       }
       dispatch(
         setUser({

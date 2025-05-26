@@ -8,6 +8,7 @@ import { RootState } from "../../app/store";
 import { setUser } from "../../features/auth/authSlice";
 import { combinedOperations } from "../../api/apiCalls";
 import "../css/Table.css";
+import { LeaveStatus } from "../../constants";
 
 interface LeaveHistoryProps {
   leaves: LeaveApplication[] | undefined;
@@ -46,13 +47,13 @@ const LeaveHistory: React.FC<LeaveHistoryProps> = ({
    */
   const getStatusClass = (status: string): string => {
     switch (status.toLowerCase()) {
-      case "pending":
+      case LeaveStatus.Pending:
         return "leave-status-pending";
-      case "approved":
+      case LeaveStatus.Approved:
         return "leave-status-approved";
-      case "rejected":
+      case LeaveStatus.Rejected:
         return "leave-status-rejected";
-      case "cancelled":
+      case LeaveStatus.Cancelled:
         return "leave-status-cancelled";
       default:
         return "";
@@ -79,14 +80,20 @@ const LeaveHistory: React.FC<LeaveHistoryProps> = ({
       toast.error("Only pending or approved leave requests can be cancelled.");
       return;
     }
-    if (leave.status === "approved" && isPast(new Date(leave.startDate))) {
+    if (
+      leave.status === LeaveStatus.Approved &&
+      isPast(new Date(leave.startDate))
+    ) {
       toast.error("Cannot cancel a leave that has already started.");
       return;
     }
     try {
       let updatedLeaveBalance = auth.leaveBalance;
       let updatedUnpaid = auth.unpaidLeaves;
-      if (leave.status === "approved" || leave.status === "pending") {
+      if (
+        leave.status === LeaveStatus.Approved ||
+        leave.status === LeaveStatus.Pending
+      ) {
         const allDays = eachDayOfInterval({
           start: new Date(leave.startDate),
           end: new Date(leave.endDate),
@@ -126,10 +133,10 @@ const LeaveHistory: React.FC<LeaveHistoryProps> = ({
    * @param {LeaveApplication} leave
    * @returns {boolean}
    */
-  const canPerformActions = (leave: LeaveApplication) :boolean=> {
-    if (leave.status === "pending") {
+  const canPerformActions = (leave: LeaveApplication): boolean => {
+    if (leave.status === LeaveStatus.Pending) {
       return true;
-    } else if (leave.status === "approved") {
+    } else if (leave.status === LeaveStatus.Approved) {
       return !isPast(new Date(leave.startDate));
     }
     return false;
@@ -220,8 +227,8 @@ const LeaveHistory: React.FC<LeaveHistoryProps> = ({
                         By
                       </span>
                       <span className="manager-name">
-                        {(leave.status === "approved" ||
-                          leave.status === "rejected") &&
+                        {(leave.status === LeaveStatus.Approved ||
+                          leave.status === LeaveStatus.Rejected) &&
                           managerNames[index]}
                       </span>
                     </div>

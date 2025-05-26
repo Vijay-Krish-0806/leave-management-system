@@ -24,3 +24,15 @@ export const LEAVE_BALANCE = 20;
 
 export const DEFAULT_MANAGER_ID = "2183";
 export const API_URL = "http://localhost:3001";
+
+export enum LeaveStatus {
+  Pending = "pending",
+  Approved = "approved",
+  Rejected = "rejected",
+  Cancelled = "cancelled",
+}
+
+export enum LeaveType {
+  Paid = "paid",
+  Unpaid = "unpaid",
+}

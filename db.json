@@ -107,6 +107,18 @@
       "leaveBalance": 20,
       "unpaidLeaves": 0,
       "id": "7ad6"
+    },
+    {
+      "username": "Another User",
+      "email": "another@pal.tech",
+      "password": "welcome",
+      "role": "employee",
+      "gender": "male",
+      "department": "Java",
+      "managerId": "7ad6",
+      "leaveBalance": 20,
+      "unpaidLeaves": 0,
+      "id": "fb29"
     }
   ],
   "leaveApplications": [
@@ -142,9 +154,9 @@
       "startDate": "2025-05-26T18:30:00.000Z",
       "endDate": "2025-05-26T18:30:00.000Z",
       "type": "unpaid",
-      "status": "pending",
+      "status": "approved",
       "requestedBy": "Dharani (dharani@pal.tech)",
-      "approvedBy": null,
+      "approvedBy": "db90",
       "currentManager": "db90",
       "reason": "Sick",
       "createdAt": "2025-05-26T07:11:31.392Z"
@@ -161,6 +173,19 @@
       "currentManager": "7ad6",
       "reason": "Sick",
       "createdAt": "2025-05-26T08:09:48.230Z"
+    },
+    {
+      "id": "1748260167018",
+      "employeeId": "2185",
+      "startDate": "2025-05-27T18:30:00.000Z",
+      "endDate": "2025-05-27T18:30:00.000Z",
+      "type": "paid",
+      "status": "rejected",
+      "requestedBy": "Dharani (dharani@pal.tech)",
+      "approvedBy": "db90",
+      "currentManager": "db90",
+      "reason": "Sick",
+      "createdAt": "2025-05-26T11:49:27.018Z"
     }
   ]
 }

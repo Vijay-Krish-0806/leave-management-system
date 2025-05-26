@@ -16,7 +16,7 @@ import { setUser } from "../../features/auth/authSlice";
 import { toast } from "react-toastify";
 import { LeaveApplication } from "../../types";
 import LeaveHistory from "./LeaveHistory";
-import { HOLIDAYS, LEAVE_BALANCE } from "../../constants";
+import { HOLIDAYS, LEAVE_BALANCE, LeaveStatus, LeaveType } from "../../constants";
 import { combinedOperations, leaveApi, userApi } from "../../api/apiCalls";
 import { FaPlus } from "react-icons/fa6";
 import "../css/ApplyLeave.css";
@@ -115,7 +115,7 @@ const LeaveManagement: React.FC = () => {
   useEffect(() => {
     setLeaves(
       (userLeaves || [])
-        .filter((leave) => leave.status === "approved")
+        .filter((leave) => leave.status === LeaveStatus.Approved)
         .map(({ startDate, endDate }) => ({
           startDate,
           endDate,
@@ -211,7 +211,8 @@ const LeaveManagement: React.FC = () => {
     const overlappingLeaves = userLeaves?.filter((leave) => {
       if (isEditing && leave.id === editLeaveId) return false;
       return (
-        (leave.status === "approved" || leave.status === "pending") &&
+        (leave.status === LeaveStatus.Approved ||
+          leave.status === LeaveStatus.Pending) &&
         startDate &&
         endDate &&
         areIntervalsOverlapping(
@@ -244,7 +245,7 @@ const LeaveManagement: React.FC = () => {
    * @returns {void}
    */
   const handleEditLeave = (leave: LeaveApplication): void => {
-    if (!["pending", "approved"].includes(leave.status)) {
+    if (![LeaveStatus.Pending,LeaveStatus.Approved].includes(leave.status as LeaveStatus)) {
       toast.error("Only pending/approved leave requests can be edited.");
       return;
     }
@@ -308,7 +309,11 @@ const LeaveManagement: React.FC = () => {
         startDate: startDate!.toISOString(),
         endDate: endDate!.toISOString(),
         type: leaveType,
-        status: "pending" as "approved" | "rejected" | "cancelled" | "pending",
+        status: LeaveStatus.Pending as
+          | "approved"
+          | "rejected"
+          | "cancelled"
+          | "pending",
         requestedBy: `${user?.username} (${user?.email})`,
         approvedBy: null,
         currentManager: auth.managerId,
@@ -319,7 +324,7 @@ const LeaveManagement: React.FC = () => {
       let updatedUnpaid = user?.unpaidLeaves || 0;
       const days = totalWorkingDays;
       if (!isEditing) {
-        if (leaveType === "paid") {
+        if (leaveType === LeaveType.Paid) {
           if (days > ((user && user.leaveBalance) || 0)) {
             toast.error("Insufficient paid leave balance");
             return;
@@ -347,12 +352,12 @@ const LeaveManagement: React.FC = () => {
         const originalDays = totalWorkingDays;
         const originalType = originalLeave?.type;
         //when editing the leave request , if type of leave is changed, change the leave balances accordingly
-        if (originalType === "paid") {
+        if (originalType === LeaveType.Paid) {
           updatedLeaveBalance += originalDays;
         } else {
           updatedUnpaid -= originalDays;
         }
-        if (leaveType === "paid") {
+        if (leaveType === LeaveType.Paid) {
           if (updatedLeaveBalance < days) {
             toast.error("Insufficient paid leave balance");
             return;
