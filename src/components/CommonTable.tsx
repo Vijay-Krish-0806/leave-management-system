@@ -64,7 +64,7 @@ const Table = <T extends object>({
                   (
                     item as {
                       id?: string | number;
-                    }
+                    } 
                   ).id ?? index
                 }
               >

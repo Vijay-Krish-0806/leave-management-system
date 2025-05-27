@@ -19,7 +19,6 @@ import NotFoundPage from "./components/NotFoundPage";
  * It includes public routes, protected dashboard routes based on user roles,
  * and a 404 Not Found page for unmatched routes. It also integrates a toast
  * notification container for displaying messages.
- *
  * 
  * @returns {JSX.Element} The rendered App component.
  *

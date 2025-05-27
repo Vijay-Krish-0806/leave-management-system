@@ -63,9 +63,8 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
       toast.success("User created successfully");
       onClose && onClose();
     },
-    onError: (error: any) => {
+    onError: () => {
       toast.error("Something went wrong while creating user");
-      console.error(error);
     },
   });
   //to update the user
@@ -77,9 +76,8 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
       toast.success("User updated successfully");
       onClose && onClose();
     },
-    onError: (error: any) => {
+    onError: () => {
       toast.error("Something went wrong while updating user");
-      console.error(error);
     },
   });
   //when manager is updated
@@ -94,13 +92,13 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["leave-applications"] });
     },
-    onError: (error: any) => {
+    onError: () => {
       toast.warning(
         "Employee updated but there was an issue updating leave applications"
       );
-      console.error("Failed to update leave applications:", error);
     },
   });
+
   /**
    * @description Function to submit created/edited user details
    * @param {React.FormEvent<HTMLFormElement>} event
@@ -114,25 +112,29 @@ const CreateEditEmployee: React.FC<EmployeeFormProps> = ({
     const form = event.currentTarget;
     const formData = new FormData(form);
     try {
+
       const username = isEditMode
         ? (formData.get("username") as string)
         : `${formData.get("firstname") || ""} ${
             formData.get("lastname") || ""
           }`.trim();
+
       if (!username) {
         toast.error("Username is required");
         setIsSubmitting(false);
         return;
       }
-      
+
       const email = formData.get("email") as string;
       const role = formData.get("role") as string;
       const gender = formData.get("gender") as string;
       const managerId = formData.get("assigned") as string;
       const department = formData.get("department") as string;
+
       const password = isEditMode
         ? initialUser?.password || "welcome"
         : (formData.get("password") as string);
+      
       if (!password) {
         toast.error("Password is required");
         setIsSubmitting(false);

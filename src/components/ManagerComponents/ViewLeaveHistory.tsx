@@ -40,6 +40,7 @@ const ViewLeaveHistory = () => {
     });
   }, [activeLeaves, searchTerm, filterStatus]);
 
+  
   const columns: Column<LeaveApplication>[] = [
     { header: "Username", accessor: "requestedBy" },
     {

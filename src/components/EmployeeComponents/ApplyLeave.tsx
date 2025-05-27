@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import {
   isWeekend,
   eachDayOfInterval,
@@ -7,7 +8,6 @@ import {
   areIntervalsOverlapping,
   isEqual,
 } from "date-fns";
-import "react-datepicker/dist/react-datepicker.css";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../app/store";
 import axios from "axios";
@@ -16,7 +16,12 @@ import { setUser } from "../../features/auth/authSlice";
 import { toast } from "react-toastify";
 import { LeaveApplication } from "../../types";
 import LeaveHistory from "./LeaveHistory";
-import { HOLIDAYS, LEAVE_BALANCE, LeaveStatus, LeaveType } from "../../constants";
+import {
+  HOLIDAYS,
+  LEAVE_BALANCE,
+  LeaveStatus,
+  LeaveType,
+} from "../../constants";
 import { combinedOperations, leaveApi, userApi } from "../../api/apiCalls";
 import { FaPlus } from "react-icons/fa6";
 import "../css/ApplyLeave.css";
@@ -49,6 +54,7 @@ const LeaveManagement: React.FC = () => {
   const [leaveReason, setLeaveReason] = useState<string>("");
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editLeaveId, setEditLeaveId] = useState<string | null>(null);
+
   const [managerId, setManagerId] = useState<string>();
 
   // Store original leave data for comparison when editing
@@ -146,7 +152,8 @@ const LeaveManagement: React.FC = () => {
 
   /**
     * @description to hande Date ranges
-    * @param {[
+    * @param 
+    * {[
             Date | null,
             Date | null
         ]} update
@@ -245,7 +252,11 @@ const LeaveManagement: React.FC = () => {
    * @returns {void}
    */
   const handleEditLeave = (leave: LeaveApplication): void => {
-    if (![LeaveStatus.Pending,LeaveStatus.Approved].includes(leave.status as LeaveStatus)) {
+    if (
+      ![LeaveStatus.Pending, LeaveStatus.Approved].includes(
+        leave.status as LeaveStatus
+      )
+    ) {
       toast.error("Only pending/approved leave requests can be edited.");
       return;
     }

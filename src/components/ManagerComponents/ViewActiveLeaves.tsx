@@ -45,9 +45,8 @@ const ViewActiveLeaves: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["leave-applications"] });
     },
-    onError: (error) => {
+    onError: () => {
       toast.error("An error occurred while updating the leave status");
-      console.error("Mutation error:", error);
     },
   });
 
@@ -58,9 +57,8 @@ const ViewActiveLeaves: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
-    onError: (error) => {
+    onError: () => {
       toast.error("Failed to update user's leave balance");
-      console.error("User update error:", error);
     },
   });
 
@@ -96,6 +94,8 @@ const ViewActiveLeaves: React.FC = () => {
       });
 
       const userData = await userApi.getById(leave.employeeId);
+
+
       const allDays = eachDayOfInterval({
         start: new Date(leave.startDate),
         end: new Date(leave.endDate),
@@ -115,7 +115,6 @@ const ViewActiveLeaves: React.FC = () => {
       await updateUserMutation.mutateAsync(userData);
       toast.error(`Leave request for ${leave.requestedBy} has been rejected`);
     } catch (error) {
-      console.error("Error in reject process:", error);
       toast.error("Failed to complete the rejection process");
     }
   };

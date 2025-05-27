@@ -77,6 +77,8 @@ const DropDownWithSearch: React.FC<Props> = ({
     setSelectedOption(null);
     setSearch("");
   };
+
+  
   return (
     <div ref={dropdownRef} className="dropdown-container">
       <div onClick={() => setIsOpen(!isOpen)} className="dropdown-header">

@@ -34,7 +34,7 @@
       "managerId": "db90",
       "department": "HR",
       "leaveBalance": 19,
-      "unpaidLeaves": 12
+      "unpaidLeaves": 13
     },
     {
       "id": "2155",
@@ -186,6 +186,19 @@
       "currentManager": "db90",
       "reason": "Sick",
       "createdAt": "2025-05-26T11:49:27.018Z"
+    },
+    {
+      "id": "1748267301955",
+      "employeeId": "2185",
+      "startDate": "2025-07-15T18:30:00.000Z",
+      "endDate": "2025-07-15T18:30:00.000Z",
+      "type": "unpaid",
+      "status": "approved",
+      "requestedBy": "Dharani (dharani@pal.tech)",
+      "approvedBy": "db90",
+      "currentManager": "db90",
+      "reason": "Sick",
+      "createdAt": "2025-05-26T13:48:21.955Z"
     }
   ]
 }
