@@ -33,3 +33,6 @@ A role-based web application built with React + Vite for managing employee leave
    - npm run dev
 2. **Start JSON Server (in a separate terminal)**
    - json-server --watch db.json --port 3001 (Ensure db.json exists in your root directory)
+
+![image](https://github.com/user-attachments/assets/954de012-dbd0-4ae2-bdee-d06d92c23deb)
+
